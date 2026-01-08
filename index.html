@@ -1,0 +1,451 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Кибер-Щит | Финал 2026</title>
+    
+    <style>
+        :root {
+            --cyan: #00f2ff;
+            --purple: #7000ff;
+            --dark-bg: #020205;
+            --glass: rgba(10, 15, 25, 0.95);
+            --border: rgba(0, 242, 255, 0.3);
+            --text: #e2e8f0;
+            --success: #00ff88;
+            --error: #ff4d4d;
+            --warning: #ffcc00;
+        }
+
+        * { 
+            margin: 0; padding: 0; box-sizing: border-box; 
+            font-family: 'Segoe UI', sans-serif; 
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body { 
+            background-color: var(--dark-bg); 
+            color: var(--text); 
+            min-height: 100vh; 
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        #matrix-bg { 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 0; opacity: 0.15; pointer-events: none; 
+        }
+
+        .glitch-title {
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            top: 50px;
+            transform: translateX(-50%);
+            font-size: clamp(1.8rem, 8vw, 3.5rem);
+            color: var(--cyan);
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            text-shadow: 2px 2px var(--purple);
+            transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .glitch-title.mini {
+            left: calc(100% - 20px);
+            top: 20px;
+            transform: translateX(-100%);
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            .glitch-title.mini {
+                left: 50%;
+                top: calc(100% - 60px);
+                transform: translateX(-50%);
+                font-size: 1rem;
+                background: rgba(112, 0, 255, 0.3);
+                padding: 10px 20px;
+                border-radius: 30px;
+                border: 1px solid var(--cyan);
+                backdrop-filter: blur(10px);
+                opacity: 1;
+            }
+        }
+
+        .app-container {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 160px auto 40px; 
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            backdrop-filter: blur(15px);
+            transition: margin 0.7s ease;
+        }
+
+        .app-container.moved { margin-top: 80px; }
+
+        .navigation { 
+            display: flex; justify-content: center; 
+            gap: 8px; margin-bottom: 30px; overflow-x: auto; padding: 10px;
+        }
+        .navigation::-webkit-scrollbar { display: none; }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            color: #8892b0;
+            padding: 12px 18px;
+            cursor: pointer;
+            border-radius: 12px;
+            font-weight: bold;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .nav-btn.active { background: var(--cyan); color: var(--dark-bg); box-shadow: 0 0 15px var(--cyan); }
+
+        .view { animation: fadeIn 0.5s ease forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .theory-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .theory-card {
+            background: rgba(255,255,255,0.02);
+            padding: 20px; border-radius: 15px;
+            border-top: 4px solid var(--purple);
+        }
+
+        #safety-bar { height: 10px; background: #111; border-radius: 5px; margin: 15px 0; overflow: hidden; }
+        #safety-fill { height: 100%; width: 40%; background: var(--error); transition: 0.5s; }
+
+        .btn-main { 
+            background: var(--purple); color: white; border: none; padding: 16px; 
+            border-radius: 12px; width: 100%; font-weight: 900; cursor: pointer; 
+            text-transform: uppercase; transition: 0.2s;
+        }
+
+        .option-btn { 
+            width: 100%; padding: 16px; margin-bottom: 12px; background: rgba(255,255,255,0.05); 
+            border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 12px; 
+            text-align: left; cursor: pointer;
+        }
+
+        #test-loader {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--dark-bg); z-index: 1000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border-radius: 24px;
+        }
+        .spinner {
+            width: 50px; height: 50px; border: 5px solid rgba(0, 242, 255, 0.1);
+            border-top: 5px solid var(--cyan); border-radius: 50%; animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        #feedback-box { margin-bottom: 15px; padding: 15px; border-radius: 10px; font-weight: bold; }
+        .correct { background: rgba(0, 255, 136, 0.15); border: 1px solid var(--success); color: var(--success); }
+        .wrong { background: rgba(255, 77, 77, 0.15); border: 1px solid var(--error); color: var(--error); }
+
+        .result-image {
+            width: 100%; max-width: 350px; border-radius: 15px;
+            margin: 20px auto; display: block; border: 2px solid var(--border);
+        }
+        #res-phrase { font-size: 1.4rem; font-weight: bold; margin: 15px 0; text-transform: uppercase; }
+
+        .hidden { display: none !important; }
+        .author-avatar {
+            width: 160px; height: 160px; object-fit: cover; border-radius: 50%; 
+            border: 4px solid var(--cyan); margin: 0 auto 20px; display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="matrix-bg"></canvas>
+
+    <h1 id="main-title" class="glitch-title" onclick="ui.tab('home')">КИБЕР-ЩИТ</h1>
+
+    <div id="app" class="app-container">
+        <div id="test-loader" class="hidden">
+            <div class="spinner"></div>
+            <p style="margin-top: 20px; color: var(--cyan); font-family: monospace;">INITIALIZING...</p>
+        </div>
+
+        <header>
+            <nav class="navigation">
+                <button class="nav-btn active" data-tab="home">ГЛАВНАЯ</button>
+                <button class="nav-btn" data-tab="theory">ОБУЧЕНИЕ</button>
+                <button class="nav-btn" data-tab="gen">ПАРОЛИ</button>
+                <button class="nav-btn" data-tab="quiz">ТЕСТ</button>
+                <button class="nav-btn" data-tab="admin">ДАННЫЕ</button>
+                <button class="nav-btn" data-tab="author">АВТОР</button>
+            </nav>
+        </header>
+
+        <div id="view-home" class="view">
+            <h2 style="color:var(--cyan); margin-bottom: 15px; text-align: center;">О ПРОЕКТЕ</h2>
+            <div class="theory-card" style="border-top-color: var(--cyan);">
+                <p>Проект разработан в связи с плохой интернет-граматностью людей. Это интерактивная платформа для изучения основ кибербезопасности в 2026 году.</p>
+            </div>
+            <button class="btn-main" style="margin-top: 25px;" onclick="ui.tab('theory')">НАЧАТЬ ОБУЧЕНИЕ</button>
+        </div>
+
+        <div id="view-theory" class="view hidden">
+            <h2 style="margin-bottom:20px; color: var(--cyan); text-align: center;">БАЗА ЗНАНИЙ</h2>
+            <div id="theory-root" class="theory-grid"></div>
+        </div>
+
+        <div id="view-gen" class="view hidden">
+            <h2 style="text-align: center; color: var(--cyan); margin-bottom: 20px;">ГЕНЕРАТОР ПАРОЛЕЙ</h2>
+            <div style="max-width: 600px; margin: 0 auto; background: rgba(0,0,0,0.3); padding: 25px; border-radius: 20px; border: 1px solid var(--border);">
+                <div id="p-out" style="background:#050505; padding:20px; text-align:center; font-family:monospace; font-size:1.5rem; color:var(--cyan); border-radius:12px; margin-bottom:15px; border: 1px solid var(--purple);">PASS_GEN</div>
+                <input type="range" id="p-len" min="8" max="40" value="16" style="width:100%; accent-color: var(--cyan);">
+                <div id="safety-bar"><div id="safety-fill"></div></div>
+                <p style="text-align:center; font-size: 0.9rem;">СТАТУС: <span id="safety-text">...</span></p>
+                <button class="btn-main" style="margin-top: 20px;" onclick="core.gen()">СГЕНЕРИРОВАТЬ</button>
+            </div>
+        </div>
+
+        <div id="view-quiz" class="view hidden">
+            <div id="q-start">
+                <h2 style="text-align:center; margin-bottom: 20px; color: var(--cyan);">ТЕСТ БЕЗОПАСНОСТИ</h2>
+                <div class="theory-card" style="margin-bottom: 20px; text-align: center;">
+                    <p>Тест содержит 20 вопросов по всем темам обучения. Постарайся набрать максимум!</p>
+                </div>
+                <button class="btn-main" onclick="core.preQuiz()">ЗАПУСТИТЬ ТЕСТ (20 ВОПРОСОВ)</button>
+            </div>
+            <div id="q-play" class="hidden">
+                <div id="feedback-box" class="hidden"></div>
+                <div style="display:flex; justify-content:space-between; margin-bottom: 15px; color: var(--cyan); font-weight: bold;">
+                    <span id="q-num">1/20</span>
+                    <span id="q-pts">Счет: 0</span>
+                </div>
+                <h3 id="q-txt" style="margin-bottom:25px;">Вопрос</h3>
+                <div id="q-ans"></div>
+                <button id="next-btn" class="btn-main hidden" onclick="core.nextQ()">СЛЕДУЮЩИЙ ВОПРОС</button>
+            </div>
+            <div id="q-result" class="hidden" style="text-align:center;">
+                <h2 id="res-title" style="font-size: 3rem; color: var(--cyan);">0/20</h2>
+                <div id="res-content">
+                    <p id="res-phrase">Оценка...</p>
+                    <img id="res-img" src="" alt="Результат" class="result-image">
+                </div>
+                <p id="res-desc" style="margin: 20px 0; opacity: 0.8;"></p>
+                <button class="btn-main" onclick="ui.tab('home')">ВЕРНУТЬСЯ В МЕНЮ</button>
+            </div>
+        </div>
+
+        <div id="view-admin" class="view hidden">
+            <h2 style="text-align: center; color: var(--cyan); margin-bottom: 20px;">ВАША СТАТИСТИКА</h2>
+            <div class="theory-card">
+                <p>Ваш ID: <b id="db-uid" style="color:var(--cyan)">...</b></p>
+                <p>Лучший результат: <b id="db-res" style="color:var(--success)">0/20</b></p>
+            </div>
+        </div>
+
+        <div id="view-author" class="view hidden">
+            <img src="my_photo.jpg" alt="Кирилл" class="author-avatar">
+            <h2 style="text-align:center; color: var(--cyan);">Кузнецов Кирилл</h2>
+            <p style="text-align:center; color: var(--purple); font-weight: bold;">9 Класс, МОУ СОШ №10</p>
+            <p style="text-align:center; margin-top:15px; opacity:0.8;">Желаю всем пользователям интернета только белые темки в ссылках.</p>
+        </div>
+    </div>
+
+    <script>
+        const THEORY_CONTENT = [
+            {t: "Двухфакторная аутентификация (2FA)", d: "Это второй слой защиты: пароль + код на телефон. Обязательно для всех важных аккаунтов."},
+            {t: "Протокол HTTPS", d: "Замочек в браузере. Он шифрует ваши данные. Никогда не вводите пароли на сайтах с http://."},
+            {t: "Фишинг", d: "Поддельные ссылки. Хакеры создают копии сайтов ВК или банков, чтобы украсть ваш логин."},
+            {t: "Менеджеры паролей", d: "Лучшее место для хранения. Не используйте один пароль везде — это главная ошибка."},
+            {t: "Социальная инженерия", d: "Манипуляция людьми. Если 'друг' просит денег или код из СМС — это мошенники."},
+            {t: "Публичный Wi-Fi", d: "В кафе любой может перехватить ваш трафик. Используйте VPN в открытых сетях."}
+        ];
+
+        const QUIZ_DATA = [
+            {q: "Что такое 2FA?", a: ["Двойной пароль", "Вход по паролю и коду", "Вход без пароля"], r: 1, exp: "Это пароль + код из СМС или приложения (2-факторка)."},
+            {q: "Сайт начинается с http:// (без S). Безопасно?", a: ["Да", "Нет, данные не шифруются", "Только с антивирусом"], r: 1, exp: "HTTPS (с 'S') шифрует данные, а HTTP — нет."},
+            {q: "Где лучше всего хранить 50 разных паролей?", a: ["В голове", "В блокноте", "В менеджере паролей"], r: 2, exp: "Менеджер паролей — самое надежное хранилище в 2026 году."},
+            {q: "Что такое Фишинг?", a: ["Вид рыбалки", "Поддельные сайты для кражи данных", "Ускорение интернета"], r: 1, exp: "Это создание копий сайтов, чтобы вы сами ввели свой пароль."},
+            {q: "Друг просит в долг в соцсетях. Твои действия?", a: ["Сразу перевести", "Задать личный вопрос", "Игнорировать навсегда"], r: 1, exp: "Это может быть взлом аккаунта друга (социальная инженерия)."},
+            {q: "Безопасен ли открытый Wi-Fi в метро?", a: ["Полностью", "Нет, данные могут перехватить", "Да, если телефон новый"], r: 1, exp: "В публичных сетях всегда используй VPN."},
+            {q: "Что делает программа-шифровальщик?", a: ["Чистит диск", "Требует выкуп за доступ к файлам", "Меняет обои"], r: 1, exp: "Она блокирует данные и требует деньги за ключ."},
+            {q: "Зачем закрывать веб-камеру?", a: ["Для красоты", "Защита от вирусов-шпионов", "Чтобы не поцарапать"], r: 1, exp: "Хакеры могут скрытно включать камеру через RAT-вирусы."},
+            {q: "Что такое Брутфорс?", a: ["Метод взлома перебором паролей", "Мощный компьютер", "Вид антивируса"], r: 0, exp: "Это автоматический подбор пароля программой."},
+            {q: "Безопасно ли заряжать телефон от USB-портов в ТЦ?", a: ["Да", "Нет, через кабель могут передать вирус", "Только 5 минут"], r: 1, exp: "Это Juice Jacking — кража данных через общедоступный USB."},
+            {q: "Какая лучшая защита от потери данных?", a: ["Сложный пароль", "Резервное копирование (Бэкап)", "Антивирус"], r: 1, exp: "Бэкап спасет, если файлы будут удалены или зашифрованы."},
+            {q: "Что значит 's' в протоколе HTTPS?", a: ["Secure (Безопасно)", "Speed (Скорость)", "Standard"], r: 0, exp: "Буква 'S' подтверждает наличие шифрования."},
+            {q: "Можно ли использовать один пароль для почты и игр?", a: ["Да", "Нет, если взломают одно — пропадет всё", "Можно, если он длинный"], r: 1, exp: "Никогда не дублируй пароли на разных сервисах."},
+            {q: "СМС: 'Карта заблокирована, перейдите по ссылке'. Что это?", a: ["Помощь банка", "Смишинг (СМС-фишинг)", "Ошибка сети"], r: 1, exp: "Банки не присылают ссылки для разблокировки в СМС."},
+            {q: "Как часто нужно обновлять систему на телефоне?", a: ["Раз в год", "Никогда", "Как только выйдет обновление"], r: 2, exp: "Обновления закрывают дыры в безопасности."},
+            {q: "Кто такой 'дроп'?", a: ["Главный хакер", "Тот, через чью карту выводят украденное", "Вирус"], r: 1, exp: "Дропы — соучастники преступлений по выводу денег."},
+            {q: "Что безопаснее для блокировки телефона?", a: ["Графический ключ", "Длинный пароль или биометрия", "Отсутствие защиты"], r: 1, exp: "Пароль и отпечаток пальца надежнее простых рисунков."},
+            {q: "Что такое 'социальная инженерия'?", a: ["Наука", "Психологическое манипулирование", "Взлом кодом"], r: 1, exp: "Это обман с целью выведать у вас секретную информацию."},
+            {q: "Какой пароль сильный?", a: ["12345678", "ИмяДата", "12+ символов, разный регистр и знаки"], r: 2, exp: "Длина и сложность — залог безопасности."},
+            {q: "Вирусы могут быть в файлах Word?", a: ["Нет", "Да, через макросы", "Только если файл большой"], r: 1, exp: "Вредоносный код часто прячут в офисных документах."}
+        ];
+
+        const core = {
+            db: { best: 0, uid: 'USER-' + Math.floor(1000 + Math.random()*9000) },
+            qIdx: 0, score: 0, currentQuiz: [],
+            
+            init() {
+                ui.matrix();
+                this.renderTheory();
+                this.gen();
+                document.getElementById('db-uid').innerText = this.db.uid;
+            },
+
+            gen() {
+                const len = document.getElementById('p-len').value;
+                const chars = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789!@#$%^&*";
+                let p = "";
+                for(let i=0; i<len; i++) p += chars[Math.floor(Math.random()*chars.length)];
+                document.getElementById('p-out').innerText = p;
+                const fill = document.getElementById('safety-fill');
+                const txt = document.getElementById('safety-text');
+                if(len < 10) { fill.style.width = "30%"; fill.style.background = "red"; txt.innerText = "СЛАБЫЙ"; }
+                else if(len < 15) { fill.style.width = "60%"; fill.style.background = "orange"; txt.innerText = "СРЕДНИЙ"; }
+                else { fill.style.width = "100%"; fill.style.background = "#00ff88"; txt.innerText = "НАДЕЖНЫЙ"; }
+            },
+
+            renderTheory() {
+                document.getElementById('theory-root').innerHTML = THEORY_CONTENT.map(t => `<div class="theory-card"><h3>${t.t}</h3><p>${t.d}</p></div>`).join('');
+            },
+
+            preQuiz() {
+                document.getElementById('test-loader').classList.remove('hidden');
+                setTimeout(() => { 
+                    document.getElementById('test-loader').classList.add('hidden'); 
+                    this.startQuiz(); 
+                }, 800);
+            },
+
+            startQuiz() {
+                this.qIdx = 0; this.score = 0;
+                // Перемешивание вопросов
+                this.currentQuiz = [...QUIZ_DATA].sort(() => Math.random() - 0.5);
+                document.getElementById('q-start').classList.add('hidden');
+                document.getElementById('q-play').classList.remove('hidden');
+                document.getElementById('q-result').classList.add('hidden');
+                this.showQuestion();
+            },
+
+            showQuestion() {
+                const q = this.currentQuiz[this.qIdx];
+                document.getElementById('feedback-box').classList.add('hidden');
+                document.getElementById('next-btn').classList.add('hidden');
+                document.getElementById('q-num').innerText = `${this.qIdx + 1} / 20`;
+                document.getElementById('q-pts').innerText = `Счет: ${this.score}`;
+                document.getElementById('q-txt').innerText = q.q;
+                const root = document.getElementById('q-ans');
+                root.innerHTML = "";
+                q.a.forEach((ans, i) => {
+                    const b = document.createElement('button');
+                    b.className = "option-btn"; b.innerText = ans;
+                    b.onclick = () => this.check(i);
+                    root.appendChild(b);
+                });
+            },
+
+            check(idx) {
+                const q = this.currentQuiz[this.qIdx];
+                const fb = document.getElementById('feedback-box');
+                fb.classList.remove('hidden');
+                if(idx === q.r) { 
+                    this.score++; fb.className = "correct"; fb.innerText = "ВЕРНО! " + q.exp;
+                } else { 
+                    fb.className = "wrong"; fb.innerText = "ОШИБКА. " + q.exp;
+                }
+                document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+                document.getElementById('next-btn').classList.remove('hidden');
+            },
+
+            nextQ() {
+                this.qIdx++;
+                if(this.qIdx < 20) this.showQuestion();
+                else this.finish();
+            },
+
+            finish() {
+                document.getElementById('q-play').classList.add('hidden');
+                document.getElementById('q-result').classList.remove('hidden');
+                const title = document.getElementById('res-title');
+                const phrase = document.getElementById('res-phrase');
+                const img = document.getElementById('res-img');
+                const desc = document.getElementById('res-desc');
+                
+                title.innerText = `${this.score} / 20`;
+                
+                if (this.score <= 8) {
+                    phrase.innerText = "ПЛОХО: ТВОЯ ЗАЩИТА ВЗЛОМАНА!";
+                    phrase.style.color = "var(--error)";
+                    img.src = "bad_result.jpg"; // Твоя картинка для плохого результата
+                    desc.innerText = "Твои знания базовые, хакерам будет легко тебя взломать. Почитай теорию еще раз!";
+                } else if (this.score <= 16) {
+                    phrase.innerText = "НОРМАЛЬНО: ТЫ НА ПУТИ К БЕЗОПАСНОСТИ";
+                    phrase.style.color = "var(--warning)";
+                    img.src = "normal_result.jpg"; // Твоя картинка для среднего результата
+                    desc.innerText = "Хороший результат, но есть пробелы. Ты знаешь основы, но дьявол кроется в деталях!";
+                } else {
+                    phrase.innerText = "ОТЛИЧНО: ТЫ КИБЕР-МАСТЕР!";
+                    phrase.style.color = "var(--success)";
+                    img.src = "good_result.jpg"; // Твоя картинка для отличного результата
+                    desc.innerText = "Поздравляем! Ты полностью готов к угрозам 2026 года. Твои данные под надежной защитой.";
+                }
+
+                if(this.score > this.db.best) this.db.best = this.score;
+                document.getElementById('db-res').innerText = this.db.best + ' / 20';
+            }
+        };
+
+        const ui = {
+            tab(id) {
+                const title = document.getElementById('main-title');
+                const app = document.getElementById('app');
+                if (id === 'home') { title.classList.remove('mini'); app.classList.remove('moved'); }
+                else { title.classList.add('mini'); app.classList.add('moved'); }
+                document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
+                document.getElementById('view-' + id).classList.remove('hidden');
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                const activeBtn = document.querySelector(`[data-tab="${id}"]`);
+                if(activeBtn) activeBtn.classList.add('active');
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            },
+            matrix() {
+                const c = document.getElementById('matrix-bg');
+                const ctx = c.getContext('2d');
+                const resize = () => { c.width = window.innerWidth; c.height = window.innerHeight; };
+                window.onresize = resize; resize();
+                const columns = Math.floor(c.width / 20);
+                const drops = new Array(columns).fill(1);
+                setInterval(() => {
+                    ctx.fillStyle = "rgba(2,2,5,0.1)"; ctx.fillRect(0,0,c.width,c.height);
+                    ctx.fillStyle = "#00f2ff"; ctx.font = "15px monospace";
+                    drops.forEach((y, i) => {
+                        const txt = String.fromCharCode(0x30A0 + Math.random() * 96);
+                        ctx.fillText(txt, i*20, y*20);
+                        if(y*20 > c.height && Math.random() > 0.975) drops[i] = 0;
+                        drops[i]++;
+                    });
+                }, 50);
+            }
+        };
+
+        window.onload = () => {
+            core.init();
+            document.querySelectorAll('.nav-btn').forEach(b => b.onclick = () => ui.tab(b.dataset.tab));
+            document.getElementById('p-len').oninput = () => core.gen();
+        };
+    </script>
+</body>
+</html>
