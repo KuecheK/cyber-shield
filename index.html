@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Кибер-Щит | Финал 2026</title>
+    <title>Кибер-Щит | Final Pro 2026</title>
     
     <style>
         :root {
@@ -23,7 +23,7 @@
             font-family: 'Segoe UI', sans-serif; 
             -webkit-tap-highlight-color: transparent;
         }
-
+        
         body { 
             background-color: var(--dark-bg); 
             color: var(--text); 
@@ -34,185 +34,174 @@
         
         #matrix-bg { 
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: 0; opacity: 0.15; pointer-events: none; 
+            z-index: 0; opacity: 0.12; pointer-events: none; 
         }
 
-        #name-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(2, 2, 5, 0.9); z-index: 10000;
-            display: flex; align-items: center; justify-content: center;
-            backdrop-filter: blur(15px);
-        }
-        .name-card {
-            background: var(--glass); border: 2px solid var(--cyan);
-            padding: 40px; border-radius: 24px; text-align: center;
-            box-shadow: 0 0 50px rgba(0, 242, 255, 0.2);
-            width: 90%; max-width: 400px;
-            animation: fadeIn 0.5s ease;
-        }
-        .name-card h2 { color: var(--cyan); margin-bottom: 15px; letter-spacing: 2px; }
-        .name-card input {
-            width: 100%; padding: 15px; margin: 20px 0;
-            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-            color: white; border-radius: 12px; outline: none; text-align: center;
-            font-size: 1.1rem;
-        }
-        .name-card input:focus { border-color: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
-
+        /* ПЛАВНАЯ АНИМАЦИЯ ЗАГОЛОВКА */
         .glitch-title {
-            position: fixed;
-            z-index: 1000;
-            left: 50%;
-            top: 50px;
-            transform: translateX(-50%);
-            font-size: clamp(1.8rem, 8vw, 3.5rem);
-            color: var(--cyan);
-            text-transform: uppercase;
-            letter-spacing: 5px;
+            position: fixed; z-index: 1000; left: 50%; top: 40%;
+            transform: translate(-50%, -50%); font-size: clamp(1.8rem, 8vw, 3.5rem);
+            color: var(--cyan); text-transform: uppercase; letter-spacing: 5px;
             text-shadow: 2px 2px var(--purple);
-            transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
-            cursor: pointer;
-            white-space: nowrap;
+            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap; text-align: center;
         }
 
-        .glitch-title.mini {
-            left: calc(100% - 20px);
-            top: 20px;
-            transform: translateX(-100%);
+        .glitch-title.active {
+            left: calc(100% - 20px); top: 25px;
+            transform: translate(-100%, 0);
             font-size: 1.2rem;
-            letter-spacing: 1px;
-            opacity: 0.7;
+            letter-spacing: 2px;
+            text-shadow: 1px 1px var(--purple);
         }
 
         @media (max-width: 768px) {
-            .glitch-title.mini {
-                left: 50%;
-                top: calc(100% - 60px);
-                transform: translateX(-50%);
-                font-size: 1rem;
-                background: rgba(112, 0, 255, 0.3);
-                padding: 10px 20px;
-                border-radius: 30px;
-                border: 1px solid var(--cyan);
-                backdrop-filter: blur(10px);
-                opacity: 1;
+            .glitch-title.active {
+                left: 50%; top: 15px;
+                transform: translate(-50%, 0);
+                width: 100%;
             }
         }
 
+        /* МОДАЛЬНОЕ ОКНО ВХОДА */
+        #name-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--dark-bg); z-index: 10000;
+            display: flex; align-items: center; justify-content: center;
+            transition: opacity 0.5s ease;
+        }
+        .name-card {
+            background: var(--glass); border: 2px solid var(--cyan);
+            padding: 35px; border-radius: 25px; text-align: center;
+            max-width: 400px; width: 90%;
+        }
+        .name-card h2 { color: var(--cyan); margin-bottom: 15px; }
+        .name-card input {
+            width: 100%; padding: 18px; background: #000; 
+            border: 1px solid var(--cyan); color: white; 
+            border-radius: 12px; text-align: center; 
+            font-size: 1.1rem; margin-bottom: 20px;
+        }
+
         .app-container {
-            position: relative;
-            z-index: 2;
-            max-width: 1200px;
-            margin: 160px auto 40px; 
-            background: var(--glass);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-            backdrop-filter: blur(15px);
-            transition: margin 0.7s ease;
+            position: relative; z-index: 2; max-width: 800px;
+            margin: 120px auto 30px; background: var(--glass);
+            border: 1px solid var(--border); border-radius: 24px;
+            padding: 20px; backdrop-filter: blur(15px); 
+            opacity: 0; transform: translateY(20px);
+            transition: all 0.8s ease; pointer-events: none;
         }
+        .app-container.show { opacity: 1; transform: translateY(0); pointer-events: all; }
 
-        .app-container.moved { margin-top: 80px; }
-
-        .navigation { 
-            display: flex; justify-content: center; 
-            gap: 8px; margin-bottom: 30px; overflow-x: auto; padding: 10px;
-        }
+        .navigation { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding: 5px; }
         .navigation::-webkit-scrollbar { display: none; }
-
+        
         .nav-btn {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border);
-            color: #8892b0;
-            padding: 12px 18px;
-            cursor: pointer;
-            border-radius: 12px;
-            font-weight: bold;
-            transition: 0.2s;
-            white-space: nowrap;
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+            color: #8892b0; padding: 10px 18px; cursor: pointer; border-radius: 12px;
+            font-weight: bold; transition: 0.3s; white-space: nowrap; font-size: 0.85rem;
         }
         .nav-btn.active { background: var(--cyan); color: var(--dark-bg); box-shadow: 0 0 15px var(--cyan); }
 
-        .view { animation: fadeIn 0.5s ease forwards; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .theory-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .theory-card {
-            background: rgba(255,255,255,0.02);
-            padding: 20px; border-radius: 15px;
-            border-top: 4px solid var(--purple);
-        }
-
-        .btn-main { 
-            background: var(--purple); color: white; border: none; padding: 16px; 
-            border-radius: 12px; width: 100%; font-weight: 900; cursor: pointer; 
-            text-transform: uppercase; transition: 0.2s;
-        }
-
-        .option-btn { 
-            width: 100%; padding: 16px; margin-bottom: 12px; background: rgba(255,255,255,0.05); 
-            border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 12px; 
-            text-align: left; cursor: pointer;
-        }
-
-        .audit-item {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .audit-item:hover { background: rgba(0, 242, 255, 0.05); border-color: var(--cyan); }
-        .audit-item.checked { background: rgba(0, 255, 136, 0.1); border-color: var(--success); }
-        .checkbox-fake {
-            width: 24px; height: 24px;
-            border: 2px solid #8892b0;
-            border-radius: 6px;
-            margin-right: 15px;
-            display: flex; align-items: center; justify-content: center;
-            transition: 0.2s;
-        }
-        .audit-item.checked .checkbox-fake {
-            background: var(--success); border-color: var(--success);
-            box-shadow: 0 0 10px var(--success);
-        }
-        .checkbox-fake::after { content: '✔'; color: #000; font-weight: bold; opacity: 0; }
-        .audit-item.checked .checkbox-fake::after { opacity: 1; }
-
+        /* ТЕРМИНАЛЬНАЯ ЗАГРУЗКА */
         #test-loader {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--dark-bg); z-index: 1000;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             border-radius: 24px;
         }
-        .spinner {
-            width: 50px; height: 50px; border: 5px solid rgba(0, 242, 255, 0.1);
-            border-top: 5px solid var(--cyan); border-radius: 50%; animation: spin 1s linear infinite;
+        .terminal-window {
+            background: #000; border: 2px solid var(--cyan);
+            border-radius: 8px; padding: 20px; max-width: 600px; width: 90%;
+            font-family: 'Courier New', monospace; color: var(--cyan);
+            font-size: 0.95rem; line-height: 1.6;
         }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .terminal-line { margin: 5px 0; opacity: 0; animation: fadeInLine 0.3s ease forwards; }
+        .terminal-line:nth-child(1) { animation-delay: 0.2s; }
+        .terminal-line:nth-child(2) { animation-delay: 0.5s; }
+        .terminal-line:nth-child(3) { animation-delay: 0.8s; }
+        .terminal-line:nth-child(4) { animation-delay: 1.1s; }
+        .terminal-line:nth-child(5) { animation-delay: 1.4s; }
+        .terminal-line:nth-child(6) { animation-delay: 1.7s; }
+        @keyframes fadeInLine {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .terminal-line.success { color: var(--success); }
 
-        #feedback-box { margin-bottom: 15px; padding: 15px; border-radius: 10px; font-weight: bold; }
-        .correct { background: rgba(0, 255, 136, 0.15); border: 1px solid var(--success); color: var(--success); }
-        .wrong { background: rgba(255, 77, 77, 0.15); border: 1px solid var(--error); color: var(--error); }
+        /* УВЕДОМЛЕНИЯ ОТ БОТА */
+        #bot-notification {
+            position: fixed; bottom: 30px; right: 30px;
+            background: rgba(0, 242, 255, 0.15); border: 2px solid var(--cyan);
+            border-radius: 20px; padding: 20px 25px; max-width: 350px;
+            color: var(--cyan); font-size: 0.95rem; z-index: 5001;
+            animation: slideInRight 0.5s ease; backdrop-filter: blur(10px);
+        }
+        #bot-notification.hidden { display: none; }
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(400px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* МОДАЛЬНОЕ ОКНО ОШИБОК */
+        #errors-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 2, 5, 0.95); z-index: 5000;
+            display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(15px);
+        }
+        .errors-card {
+            background: var(--glass); border: 2px solid var(--error);
+            padding: 40px; border-radius: 24px; width: 90%; max-width: 600px;
+            max-height: 80vh; overflow-y: auto;
+        }
+        .error-item {
+            background: rgba(255, 77, 77, 0.1); border-left: 4px solid var(--error);
+            padding: 15px; margin-bottom: 15px; border-radius: 8px;
+        }
+
+        .theory-card {
+            background: rgba(255,255,255,0.03); padding: 18px; 
+            border-radius: 15px; border-left: 4px solid var(--cyan); 
+            margin-bottom: 12px;
+        }
+
+        .audit-item {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+            padding: 15px; margin-bottom: 10px; border-radius: 12px;
+            display: flex; align-items: center; cursor: pointer; transition: 0.3s;
+        }
+        .audit-item.checked { background: rgba(0, 255, 136, 0.1); border-color: var(--success); }
+        .checkbox-fake {
+            width: 24px; height: 24px; border: 2px solid #8892b0;
+            border-radius: 6px; margin-right: 15px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .audit-item.checked .checkbox-fake { background: var(--success); border-color: var(--success); }
+        .checkbox-fake::after { content: '✓'; color: #000; font-weight: bold; opacity: 0; }
+        .audit-item.checked .checkbox-fake::after { opacity: 1; }
+
+        .btn-main { 
+            background: var(--purple); color: white; border: none; 
+            padding: 16px; border-radius: 12px; width: 100%; 
+            font-weight: 900; cursor: pointer; text-transform: uppercase; 
+            margin-top: 10px;
+        }
+        .option-btn { 
+            width: 100%; padding: 15px; margin-bottom: 10px; 
+            background: rgba(255,255,255,0.05); 
+            border: 1px solid rgba(255,255,255,0.1); 
+            color: white; border-radius: 12px; 
+            text-align: left; cursor: pointer;
+        }
+        
+        .correct { border-color: var(--success); color: var(--success); background: rgba(0, 255, 136, 0.05); }
+        .wrong { border-color: var(--error); color: var(--error); background: rgba(255, 77, 77, 0.05); }
+        .hidden { display: none !important; }
 
         .result-image {
             width: 100%; max-width: 350px; border-radius: 15px;
             margin: 20px auto; display: block; border: 2px solid var(--border);
-        }
-        #res-phrase { font-size: 1.4rem; font-weight: bold; margin: 15px 0; text-transform: uppercase; }
-
-        .hidden { display: none !important; }
-        .author-avatar {
-            width: 160px; height: 160px; object-fit: cover; border-radius: 50%; 
-            border: 4px solid var(--cyan); margin: 0 auto 20px; display: block;
         }
     </style>
 </head>
@@ -220,152 +209,162 @@
 
     <div id="name-modal">
         <div class="name-card">
-            <h2>ДОСТУП В СИСТЕМУ</h2>
-            <p>Введите ваш позывной (имя):</p>
-            <input type="text" id="user-name-input" placeholder="Имя..." autocomplete="off">
-            <button class="btn-main" onclick="saveName()">НАЧАТЬ РАБОТУ</button>
+            <h2>КАК ТЕБЯ НАЗЫВАТЬ?</h2>
+            <input type="text" id="user-name-input" placeholder="напиши сюда">
+            <button class="btn-main" onclick="initApp()">ВОЙТИ В СИСТЕМУ</button>
+        </div>
+    </div>
+    
+    <div id="errors-modal" class="hidden">
+        <div class="errors-card">
+            <h2 style="color: var(--error); text-align: center;">❌ НАЙДЕНЫ ОШИБКИ</h2>
+            <p style="text-align: center; margin: 10px 0;">Ты ошибся в <span id="errors-count">0</span> вопросах.</p>
+            <div id="errors-list"></div>
+            <div style="display: flex; gap: 10px; margin-top: 25px;">
+                <button class="btn-main" style="background: var(--error);" onclick="core.retakeErrors()">ПЕРЕОТВЕТИТЬ</button>
+                <button class="btn-main" style="background: rgba(255,255,255,0.1);" onclick="core.skipErrors()">ПРОПУСТИТЬ</button>
+            </div>
         </div>
     </div>
 
-    <canvas id="matrix-bg"></canvas>
+    <div id="bot-notification" class="hidden">
+        <span style="position: absolute; top: 10px; right: 15px; cursor: pointer;" onclick="ui.closeBotNotification()">✕</span>
+        <strong style="display: block; margin-bottom: 10px; color: var(--success);">💬 Сообщение от админа:</strong>
+        <div id="bot-notification-text"></div>
+    </div>
 
-    <h1 id="main-title" class="glitch-title" onclick="ui.tab('home')">КИБЕР-ЩИТ</h1>
+    <canvas id="matrix-bg"></canvas>
+    <h1 id="main-title" class="glitch-title">КИБЕР-ЩИТ</h1>
 
     <div id="app" class="app-container">
         <div id="test-loader" class="hidden">
-            <div class="spinner"></div>
-            <p style="margin-top: 20px; color: var(--cyan); font-family: monospace;">INITIALIZING...</p>
+            <div class="terminal-window">
+                <div class="terminal-line">▶ cyber-shield@2.0.0 $ initialize_test</div>
+                <div class="terminal-line">loading_database_questions.json...</div>
+                <div class="terminal-line success">✓ Database loaded (17 questions)</div>
+                <div class="terminal-line">analyzing_user_security_level.py...</div>
+                <div class="terminal-line success">✓ Security profile initialized</div>
+                <div class="terminal-line success">✓ Exam ready - Press START</div>
+            </div>
         </div>
 
-        <header>
-            <nav class="navigation">
-                <button class="nav-btn active" data-tab="home">ГЛАВНАЯ</button>
-                <button class="nav-btn" data-tab="theory">ОБУЧЕНИЕ</button>
-                <button class="nav-btn" data-tab="audit">АУДИТ</button> 
-                <button class="nav-btn" data-tab="quiz">ТЕСТ</button>
-                <button class="nav-btn" data-tab="admin">ДАННЫЕ</button>
-                <button class="nav-btn" data-tab="author">АВТОР</button>
-            </nav>
-        </header>
+        <nav class="navigation" id="main-nav">
+            <button class="nav-btn active" onclick="ui.tab('home')">ГЛАВНАЯ</button>
+            <button class="nav-btn" onclick="ui.tab('news')">НОВОСТИ</button>
+            <button class="nav-btn" onclick="ui.tab('theory')">ОБУЧЕНИЕ</button>
+            <button class="nav-btn" onclick="ui.tab('quiz')">ТЕСТ</button>
+            <button class="nav-btn" onclick="ui.tab('admin')">ДАННЫЕ</button>
+            <button class="nav-btn" onclick="ui.tab('author')">АВТОР</button>
+        </nav>
 
         <div id="view-home" class="view">
-            <h2 style="color:var(--cyan); margin-bottom: 15px; text-align: center;">О ПРОЕКТЕ</h2>
-            <div class="theory-card" style="border-top-color: var(--cyan);">
-                <p>Проект разработан в связи с плохой интернет-грамостностью людей. Это интерактивная платформа для изучения основ кибербезопасности в 2026 году.</p>
+            <h2 style="color:var(--cyan); margin-bottom: 15px;">СИСТЕМА АКТИВИРОВАНА</h2>
+            <div class="theory-card">
+                <p>Добро пожаловать в проект Кибер-Щит 2026. Здесь ты научишься защищать свои данные от угроз будущего.</p>
             </div>
-            <button class="btn-main" style="margin-top: 25px;" onclick="ui.tab('theory')">НАЧАТЬ ОБУЧЕНИЕ</button>
+            <button class="btn-main" onclick="ui.tab('theory')">НАЧАТЬ ОБУЧЕНИЕ</button>
+        </div>
+
+        <div id="view-news" class="view hidden">
+            <h2 style="color:var(--cyan); margin-bottom: 20px; text-align: center;">ЛЕНТА СООБЩЕНИЙ</h2>
+            <div id="news-container">
+                <p style="text-align: center; opacity: 0.5;">Загрузка обновлений...</p>
+            </div>
         </div>
 
         <div id="view-theory" class="view hidden">
-            <h2 style="margin-bottom:20px; color: var(--cyan); text-align: center;">БАЗА ЗНАНИЙ</h2>
-            <div id="theory-root" class="theory-grid"></div>
-        </div>
-
-        <div id="view-audit" class="view hidden">
-            <h2 style="text-align: center; color: var(--cyan); margin-bottom: 20px;">ЛИЧНЫЙ АУДИТ</h2>
-            <div class="theory-card" style="margin-bottom: 25px; text-align: center;">
-                <p>Честно отметь пункты, которые ты выполняешь в реальной жизни. Узнай, насколько ты уязвим.</p>
-            </div>
-            
-            <div id="audit-list" style="max-width: 600px; margin: 0 auto;"></div>
-
-            <div style="margin-top: 30px; text-align: center; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 15px; border: 1px solid var(--border);">
-                <p style="color: #8892b0; font-size: 0.9rem; margin-bottom: 10px;">ТВОЙ УРОВЕНЬ РЕАЛЬНОЙ ЗАЩИТЫ:</p>
-                <h1 id="audit-score" style="font-size: 3.5rem; color: var(--error); transition: 0.5s; font-family: monospace;">0%</h1>
-                <p id="audit-msg" style="margin-top: 10px; color: var(--text);">Срочно займись безопасностью!</p>
-            </div>
+            <h2 style="margin-bottom:20px; color: var(--cyan);">БАЗА ЗНАНИЙ</h2>
+            <div id="theory-root"></div>
         </div>
 
         <div id="view-quiz" class="view hidden">
             <div id="q-start">
-                <h2 style="text-align:center; margin-bottom: 20px; color: var(--cyan);">ТЕСТ БЕЗОПАСНОСТИ</h2>
-                <div class="theory-card" style="margin-bottom: 20px; text-align: center;">
-                    <p>Тест содержит 20 вопросов по всем темам обучения. Постарайся набрать максимум!</p>
+                <h2 style="text-align:center; color: var(--cyan);">ТЕСТ БЕЗОПАСНОСТИ</h2>
+                <div class="theory-card" style="margin: 20px 0; text-align: center;">
+                    <p>Тест содержит 17 вопросов по всем темам обучения.</p>
                 </div>
-                <button class="btn-main" onclick="core.preQuiz()">ЗАПУСТИТЬ ТЕСТ (20 ВОПРОСОВ)</button>
+                <button class="btn-main" onclick="core.preQuiz()">ЗАПУСТИТЬ ТЕСТ</button>
             </div>
             <div id="q-play" class="hidden">
-                <div id="feedback-box" class="hidden"></div>
                 <div style="display:flex; justify-content:space-between; margin-bottom: 15px; color: var(--cyan); font-weight: bold;">
-                    <span id="q-num">1/20</span>
-                    <span id="q-pts">Счет: 0</span>
+                    <span id="q-num">1/17</span>
+                    <span id="q-pts">СЧЕТ: 0</span>
                 </div>
-                <h3 id="q-txt" style="margin-bottom:25px;">Вопрос</h3>
+                <div id="feedback-box" class="theory-card hidden"></div>
+                <h3 id="q-txt" style="margin-bottom:20px;"></h3>
                 <div id="q-ans"></div>
                 <button id="next-btn" class="btn-main hidden" onclick="core.nextQ()">СЛЕДУЮЩИЙ ВОПРОС</button>
             </div>
             <div id="q-result" class="hidden" style="text-align:center;">
-                <h2 id="res-title" style="font-size: 3rem; color: var(--cyan);">0/20</h2>
-                <div id="res-content">
-                    <p id="res-phrase">Оценка...</p>
-                    <img id="res-img" src="" alt="Результат" class="result-image">
-                </div>
-                <p id="res-desc" style="margin: 20px 0; opacity: 0.8;"></p>
-                <button class="btn-main" onclick="ui.tab('home')">ВЕРНУТЬСЯ В МЕНЮ</button>
+                <h2 id="res-title" style="font-size: 3rem; color: var(--cyan);">0/17</h2>
+                <p id="res-phrase" style="margin: 20px 0; font-size: 1.2rem;"></p>
+                <img id="res-img" src="" class="result-image">
+                <button class="btn-main" onclick="core.restartTest()">ПРОЙТИ ТЕСТ ЗАНОВО</button>
             </div>
         </div>
 
         <div id="view-admin" class="view hidden">
-            <h2 style="text-align: center; color: var(--cyan); margin-bottom: 20px;">ВАША СТАТИСТИКА</h2>
+            <h2 style="text-align: center; color: var(--cyan);">ТВОЯ СТАТИСТИКА</h2>
             <div class="theory-card">
-                <p>Ваш ID: <b id="db-uid" style="color:var(--cyan)">...</b></p>
-                <p>Лучший результат: <b id="db-res" style="color:var(--success)">0/20</b></p>
+                <p>Твой ID: <b id="db-uid" style="color:var(--cyan)">...</b></p>
+                <p>Лучший результат: <b id="db-res" style="color:var(--success)">0/17</b></p>
             </div>
         </div>
 
-        <div id="view-author" class="view hidden">
-            <img src="my_photo.jpg" alt="Кирилл" class="author-avatar">
-            <h2 style="text-align:center; color: var(--cyan);">Кузнецов Кирилл</h2>
-            <p style="text-align:center; color: var(--purple); font-weight: bold;">9 Класс, МОУ СОШ №10</p>
-            <p style="text-align:center; margin-top:15px; opacity:0.8;">Желаю всем пользователям интернета только белые темки в ссылках.</p>
+        <div id="view-author" class="view hidden" style="text-align: center;">
+            <img src="my_photo.jpg" style="width:180px; height:180px; border-radius:50%; border:3px solid var(--cyan); margin-bottom:20px;">
+            <h2 style="color: var(--cyan);">Кузнецов Кирилл</h2>
+            <p style="color: var(--purple); font-weight: bold;">Разработчик проекта</p>
+            <div class="theory-card" style="margin-top:20px; text-align: left;">
+                <p>МОУ СОШ №10. 9 класс. Кибер-Щит — это шаг к безопасному цифровому будущему.</p>
+            </div>
         </div>
     </div>
 
     <script>
-        let userName = "Аноним"; 
-        let wrongQuestions = []; // Массив для хранения номеров вопросов с ошибками
+        let userName = "Аноним";
+        let wrongQuestions = [];
+        let suspiciousAnswers = 0;
+        let currentMode = 'quiz';
 
         const THEORY_CONTENT = [
-            {t: "Двухфакторная аутентификация (2FA)", d: "Пароль могут украсть. 2FA требует второй ключ: код из СМС или приложения. Это защита 99% аккаунтов."},
-            {t: "Протокол HTTPS", d: "Буква 'S' и замочек означают, что канал зашифрован. На сайтах HTTP (без S) любой перехватит ваш ввод."},
-            {t: "Фишинг", d: "Подделка сайтов. Не верьте дизайну — смотрите на адресную строку. Задача хакера — заставить вас ввести пароль самому."},
-            {t: "Менеджеры паролей", d: "Единственный способ помнить 50 сложных паролей. Хранить пароли в браузере или заметках опасно."},
-            {t: "Социальная инженерия", d: "Взлом человека, а не компьютера. Если друг срочно просит денег или код — это взлом его аккаунта."},
-            {t: "Публичный Wi-Fi", d: "В открытых сетях (кафе, метро) трафик виден всем. Для защиты данных всегда включайте VPN."},
-            {t: "Программы-вымогатели (Ransomware)", d: "Вирусы, шифрующие файлы. Они не удаляют данные, а требуют выкуп за ключ расшифровки."},
-            {t: "RAT и Веб-камеры", d: "Трояны удаленного доступа (RAT) позволяют хакеру смотреть через вашу камеру. Шторка — лучшая защита."},
-            {t: "Брутфорс (Brute Force)", d: "Метод взлома полным перебором всех комбинаций. Спасает только длинный пароль и ограничение попыток входа."},
-            {t: "Juice Jacking (USB-зарядка)", d: "Заряжая телефон через USB-порт в ТЦ, можно подцепить вирус. Используйте только свой адаптер в розетку."},
-            {t: "Резервное копирование (Бэкап)", d: "Единственное спасение от шифровальщиков и поломки диска. Делайте копии на внешний диск или в облако."},
-            {t: "Повторное использование паролей", d: "Главная ошибка. Если взломают форум с вашим паролем, хакеры сразу попробуют его на вашей почте."},
-            {t: "Смишинг (SMS-phishing)", d: "Фишинг через СМС. Банки никогда не шлют ссылки на 'разблокировку' карты в сообщениях."},
-            {t: "Обновления ПО", d: "Это не просто новые функции. Обновления закрывают найденные уязвимости (дыры), через которые проникают вирусы."},
-            {t: "Дропы (Дропперы)", d: "Подставные лица для обналичивания краденых денег. Работа 'принимать переводы' делает вас соучастником."},
-            {t: "Блокировка экрана", d: "Графический ключ легко подсмотреть по следам на экране. Пароль или биометрия намного надежнее."},
-            {t: "Макро-вирусы", d: "Вредоносный код прячется внутри документов Word/Excel. Никогда не включайте макросы в файлах из почты."}
+            {id: 1, t: "Двухфакторная аутентификация (2FA)", d: "Пароль могут украсть. 2FA требует второй ключ: код из СМС или приложения."},
+            {id: 2, t: "Протокол HTTPS", d: "Буква 'S' и замочек означают, что канал зашифрован. На сайтах HTTP твои данные видны всем."},
+            {id: 3, t: "Фишинг", d: "Подделка сайтов. Не верьте дизайну — смотрите на адресную строку."},
+            {id: 4, t: "Менеджеры паролей", d: "Единственный способ помнить 50 сложных паролей."},
+            {id: 5, t: "Социальная инженерия", d: "Взлом человека, а не компьютера. Если друг срочно просит денег — это взлом его аккаунта."},
+            {id: 6, t: "Публичный Wi-Fi", d: "В открытых сетях (кафе, метро) трафик виден всем. Всегда включайте VPN."},
+            {id: 7, t: "Программы-вымогатели (Ransomware)", d: "Вирусы, шифрующие файлы за выкуп."},
+            {id: 8, t: "RAT и Веб-камеры", d: "Троян удаленного доступа позволяет хакеру смотреть через твою камеру."},
+            {id: 9, t: "Брутфорс (Brute Force)", d: "Метод взлома полным перебором всех комбинаций."},
+            {id: 10, t: "Juice Jacking (USB-зарядка)", d: "Заряжая телефон через USB-порт в ТЦ, можно подцепить вирус."},
+            {id: 11, t: "Резервное копирование (Бэкап)", d: "Единственное спасение от шифровальщиков и поломки диска."},
+            {id: 12, t: "Повторное использование паролей", d: "Если взломают форум с твоим паролем, хакеры сразу попробуют его на твоей почте."},
+            {id: 13, t: "Смишинг (SMS-phishing)", d: "Фишинг через СМС. Банки НИКОГДА не просят кликать на ссылки."},
+            {id: 14, t: "Обновления ПО", d: "Обновления закрывают найденные уязвимости (дыры)."},
+            {id: 15, t: "Дропы (Дропперы)", d: "Подставные лица для обналичивания краденых денег."},
+            {id: 16, t: "Блокировка экрана", d: "Графический ключ легко подсмотреть по следам на экране."},
+            {id: 17, t: "Макро-вирусы", d: "Вредоносный код прячется внутри документов Word/Excel."}
         ];
 
         const QUIZ_DATA = [
-            {id: 1, q: "В чем суть защиты 2FA?", a: ["Шифрование пароля алгоритмом AES", "Требование двух разных данных для входа", "Дублирование пароля на резервную почту"], r: 1, exp: "Это принцип 'что-то знаешь' (пароль) + 'что-то имеешь' (телефон)."},
-            {id: 2, q: "Вы на сайте http://bank.com (без S). Ваши действия?", a: ["Можно вводить данные, если включен антивирус", "Безопасно только для просмотра, вводить ничего нельзя", "Это устаревший протокол, но он безопасен"], r: 1, exp: "HTTP передает данные в открытом виде. Антивирус тут не поможет."},
-            {id: 3, q: "Где безопаснее всего хранить базу из 50 паролей?", a: ["В облачном документе Google Docs", "В зашифрованном менеджере паролей", "В кэше браузера с автосохранением"], r: 1, exp: "Только менеджеры обеспечивают надежное шифрование базы."},
-            {id: 4, q: "Основной признак фишингового сайта:", a: ["Отсутствие рекламных баннеров", "Несовпадение домена (URL) с оригинальным", "Медленная загрузка страниц"], r: 1, exp: "Дизайн можно скопировать, но домен подделать нельзя (напр. vkb.com вместо vk.com)."},
-            {id: 5, q: "Знакомый в соцсети просит перевести деньги на карту. Что это?", a: ["Социальная инженерия (взлом аккаунта)", "Криптографическая атака", "Сетевой сниффинг"], r: 0, exp: "Хакерам проще обмануть человека от лица друга, чем ломать банковскую систему."},
-            {id: 6, q: "Вы подключились к Wi-Fi в метро. Что угрожает данным?", a: ["Ничего, если на телефоне сложный пароль", "Перехват трафика (Sniffing)", "Физическая поломка модуля Wi-Fi"], r: 1, exp: "В открытой сети хакер может видеть весь незашифрованный трафик."},
-            {id: 7, q: "Как действует Ransomware (программа-вымогатель)?", a: ["Майнит криптовалюту на фоне", "Шифрует файлы и требует оплату за ключ", "Копирует данные и отправляет их в даркнет"], r: 1, exp: "Цель Ransomware — шантаж блокировкой ваших собственных файлов."},
-            {id: 8, q: "Для чего хакеры используют RAT-трояны?", a: ["Для удаленного управления и слежки (камера/микрофон)", "Для ускорения работы системы", "Для подмены DNS-серверов"], r: 0, exp: "RAT (Remote Access Trojan) дает полный контроль над устройством."},
-            {id: 9, q: "Что такое Brute Force атака?", a: ["Взлом через переполнение буфера", "Автоматический перебор всех комбинаций пароля", "Атака на физический сервер кувалдой"], r: 1, exp: "Это метод грубой силы: программа просто пробует все пароли подряд."},
-            {id: 10, q: "Чем опасна зарядка через USB-порт на вокзале?", a: ["Может сгореть контроллер питания", "Возможна скрытая передача данных (Juice Jacking)", "Только низкой скоростью зарядки"], r: 1, exp: "USB-кабель передает и энергию, и данные. Этим пользуются злоумышленники."},
-            {id: 11, q: "Единственный способ гарантированно вернуть данные после шифровальщика:", a: ["Заплатить выкуп хакерам", "Использовать дебаггер кода", "Восстановить из холодного бэкапа (копии)"], r: 2, exp: "Даже после оплаты выкуп вам могут не дать ключ. Только бэкап дает 100% гарантию."},
-            {id: 12, q: "Технически 'S' в HTTPS означает использование:", a: ["SSL/TLS сертификата", "System Security Layer", "Speed Optimization"], r: 0, exp: "Это криптографические протоколы для безопасной связи."},
-            {id: 13, q: "Почему нельзя использовать один пароль везде?", a: ["Браузер начнет путать автозаполнение", "При утечке одной базы (напр. форума) взломают всё", "Пароль быстро устаревает"], r: 1, exp: "Принцип домино: упал один сервис — открылись все ваши аккаунты."},
-            {id: 14, q: "Пришло СМС: 'Ваш счет заблокирован, детали по ссылке'. Это:", a: ["Смишинг (Smishing)", "Вишинг (Vishing)", "DDoS-атака на телефон"], r: 0, exp: "Смишинг — это фишинг через SMS-сообщения."},
-            {id: 15, q: "Главная цель обновлений операционной системы:", a: ["Замедление старых устройств", "Патчинг (закрытие) уязвимостей безопасности", "Изменение дизайна иконок"], r: 1, exp: "Обновления закрывают 'дыры', через которые вирусы проникают без вашего ведома."},
-            {id: 16, q: "Вам предлагают работу: 'Принимать деньги на карту и переводить дальше'. Кто вы?", a: ["Крипто-инвестор", "Дроп (соучастник отмывания)", "Фрилансер-бухгалтер"], r: 1, exp: "Дропы несут уголовную ответственность за отмывание украденных средств."},
-            {id: 17, q: "Почему графический ключ менее безопасен, чем PIN/Биометрия?", a: ["Его сложно запомнить", "След от пальца на экране выдает траекторию", "Он не работает в темноте"], r: 1, exp: "Жирный след на стекле часто позволяет точно восстановить рисунок ключа."},
-            {id: 18, q: "Какой вектор атаки нацелен на человеческую психологию?", a: ["SQL-инъекция", "XSS-скриптинг", "Социальная инженерия"], r: 2, exp: "Здесь взламывают не код, а доверие, страх или любопытство человека." },
-            {id: 19, q: "Какой пароль энтропийно (математически) сложнее?", a: ["P@ssw0rd123", "Trubadur-88", "k9#mP2$vLq!z"], r: 2, exp: "Случайный набор символов не поддается словарной атаке, в отличие от первых двух." },
-            {id: 20, q: "Файл 'Report.docx' просит включить макросы. Что это?", a: ["Стандартная процедура Office", "Потенциальный запуск вредоносного скрипта", "Настройка шрифтов"], r: 1, exp: "Макросы — это программы внутри документов. Через них часто загружают вирусы." }
+            {id: 1, q: "Что защищает 2FA от взлома аккаунта?", a: ["Только шифрует пароль", "Требует второй ключ кроме пароля", "Автоматически меняет пароль"], r: 1, exp: "2FA добавляет второй фактор (телефон/ключ) кроме пароля."},
+            {id: 2, q: "Почему HTTPS безопаснее чем HTTP?", a: ["Быстрее загружает страницы", "Шифрует данные при передаче", "Автоматически блокирует вирусы"], r: 1, exp: "HTTPS использует SSL/TLS для шифрования."},
+            {id: 3, q: "Главный признак фишингового сайта?", a: ["Плохой дизайн", "Неправильный адрес в строке браузера", "Отсутствие логотипа"], r: 1, exp: "Фишеры копируют дизайн, но не могут подделать домен."},
+            {id: 4, q: "Какое место хранить пароли максимально безопасно?", a: ["Записная книжка", "Зашифрованный менеджер паролей", "Памятка в телефоне"], r: 1, exp: "Только менеджеры паролей обеспечивают шифрование."},
+            {id: 5, q: "Если друг просит деньги через мессенджер срочно - это?", a: ["Нормальная ситуация", "Вероятно, его аккаунт взломали", "Тест на доверие"], r: 1, exp: "Когда взламывают аккаунт, первое - просят деньги."},
+            {id: 6, q: "Почему открытый Wi-Fi (в кафе) опасен?", a: ["Медленная скорость", "Любой в сети может перехватить трафик", "Много рекламы"], r: 1, exp: "На открытом Wi-Fi трафик не шифруется."},
+            {id: 7, q: "Как работает вирус Ransomware?", a: ["Медленно крадет файлы", "Шифрует твои файлы и требует выкуп", "Выключает антивирус"], r: 1, exp: "Ransomware - это шифровальщик."},
+            {id: 8, q: "Что делает RAT (троян удаленного доступа)?", a: ["Замедляет интернет", "Дает хакеру полный контроль над ПК", "Удаляет антивирус"], r: 1, exp: "RAT позволяет удаленно управлять ПК."},
+            {id: 9, q: "Как работает атака перебора (Brute Force)?", a: ["Отправляет вирус", "Пробует все комбинации паролей подряд", "Использует ИИ"], r: 1, exp: "Brute Force - машина пробует пароли: 123456, 123457..."},
+            {id: 10, q: "Почему опасно заряжать телефон через USB в общественном месте?", a: ["Может упасть и сломаться", "USB передает данные кроме электричества", "Браузер будет медленнее"], r: 1, exp: "USB - это не только электричество, но и канал данных."},
+            {id: 11, q: "Что единственное спасает файлы от Ransomware?", a: ["Дорогой антивирус", "Резервная копия на внешнем диске", "Отключение интернета"], r: 1, exp: "Только бэкап на отдельном носителе 100% спасает."},
+            {id: 12, q: "Почему один пароль на всех сайтах - это опасно?", a: ["Невозможно выбрать сложный", "Если утечка одного сайта - взломают ВСЕ", "Браузер не может запомнить много"], r: 1, exp: "Утечка данных происходит постоянно."},
+            {id: 13, q: "Может ли банк отправить ссылку для подтверждения в СМС?", a: ["Да, это стандарт", "НЕТ! Это Смишинг", "Только если СРОЧНО"], r: 1, exp: "Банки НИКОГДА не шлют ссылки в СМС."},
+            {id: 14, q: "В чем главное назначение обновлений ОС?", a: ["Добавить новые смодзи", "Закрыть найденные уязвимости", "Увеличить яркость экрана"], r: 1, exp: "Обновления = патчи для безопасности."},
+            {id: 15, q: "Чем занимаются люди, работающие 'drop'ами?", a: ["Доставляют посылки", "Отмывают украденные деньги", "Программируют вирусы"], r: 1, exp: "Dropы - это мулы. Это преступление!"},
+            {id: 16, q: "Почему графический ключ менее защищен чем PIN?", a: ["Жирные следы на экране показывают траекторию", "Он занимает слишком много памяти", "Его сложнее придумать"], r: 0, exp: "На сенсорном экране видны отпечатки пальцев."},
+            {id: 17, q: "Почему макросы в Word файлах опасны?", a: ["Они ломают форматирование", "Могут содержать вредоносный код", "Замедляют открытие"], r: 1, exp: "Макросы - это скрипты. Мошенники прячут вирусы в макросах."}
         ];
 
         const AUDIT_ITEMS = [
@@ -379,10 +378,34 @@
             "Я проверяю домены сайтов перед вводом данных"
         ];
 
-        // ОБНОВЛЕННАЯ ФУНКЦИЯ: Теперь шлем и ошибки (wrong_questions)
-        async function sendToTelegram(score, total, name, wrong_qs) {
-            const RENDER_URL = "https://cyber-shield-bot.onrender.com/send_result";
+        // ФУНКЦИЯ ЗАГРУЗКИ НОВОСТЕЙ ОТ АДМИНА
+        async function fetchNews() {
+            const container = document.getElementById('news-container');
+            try {
+                const res = await fetch('https://cyber-shield-bot.onrender.com/admin_message');
+                const data = await res.json();
+                
+                // Проверяем структуру ответа от бота
+                if(data.status === 'success' && data.messages && data.messages.length > 0) {
+                    container.innerHTML = data.messages.reverse().map(m => `
+                        <div style="background: rgba(112, 0, 255, 0.1); border: 1px solid var(--purple); padding: 15px; border-radius: 15px; margin-bottom: 15px;">
+                            <small style="color: var(--cyan); display: block; margin-bottom: 5px;">📢 ЦЕНТР УВЕДОМЛЕНИЙ</small>
+                            <p>${m.text}</p>
+                            <small style="opacity: 0.5;">${m.time}</small>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<p style="text-align: center; opacity: 0.5;">Пока новостей нет.</p>';
+                }
+            } catch (e) {
+                console.error('Ошибка загрузки новостей:', e);
+                container.innerHTML = '<p style="text-align: center; color: var(--error);">❌ Ошибка связи с сервером.</p>';
+            }
+        }
 
+        // ФУНКЦИЯ ОТПРАВКИ РЕЗУЛЬТАТОВ В TELEGRAM БОТ
+        async function sendToTelegram(score, total, name, wrong_qs, suspicious, timeData) {
+            const RENDER_URL = "https://cyber-shield-bot.onrender.com/send_result";
             try {
                 const response = await fetch(RENDER_URL, {
                     method: 'POST',
@@ -390,30 +413,41 @@
                     body: JSON.stringify({
                         name: name,
                         score: score,
-                        wrong_questions: wrong_qs // Отправляем массив ID неверных вопросов
+                        wrong_questions: wrong_qs,
+                        suspicious_answers: suspicious,
+                        answer_times: timeData
                     })
                 });
                 
-                if (response.ok) {
-                    console.log("Данные успешно ушли на сервер!");
+                const result = await response.json();
+                if(result.status === 'success') {
+                    console.log('✅ Результаты отправлены в Telegram');
+                } else {
+                    console.error('⚠️ Ошибка на сервере:', result.message);
                 }
             } catch (e) {
-                console.error("Ошибка при связи с сервером:", e);
-                alert("Результат отправляется... Если бот 'спал', это займет около 30 секунд.");
+                console.error("❌ Ошибка отправки результатов:", e);
             }
         }
 
-        function saveName() {
-            const input = document.getElementById('user-name-input').value;
-            if (input && input.trim() !== "") {
-                userName = input.trim();
-            }
-            document.getElementById('name-modal').classList.add('hidden');
+        function initApp() {
+            const input = document.getElementById('user-name-input');
+            if(input.value) userName = input.value;
+            
+            document.getElementById('name-modal').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('name-modal').classList.add('hidden');
+                document.getElementById('main-title').classList.add('active');
+                document.getElementById('app').classList.add('show');
+                fetchNews();
+            }, 500);
         }
 
         const core = {
             db: { best: 0, uid: 'USER-' + Math.floor(1000 + Math.random()*9000) },
             qIdx: 0, score: 0, currentQuiz: [],
+            questionStartTime: 0, allAnswerTimes: [],
+            errorsThatNeedReview: [],
             
             init() {
                 ui.matrix();
@@ -423,44 +457,32 @@
             },
 
             renderTheory() {
-                document.getElementById('theory-root').innerHTML = THEORY_CONTENT.map(t => `<div class="theory-card"><h3>${t.t}</h3><p>${t.d}</p></div>`).join('');
-            },
-
-            renderAudit() {
-                const root = document.getElementById('audit-list');
-                root.innerHTML = AUDIT_ITEMS.map((item, index) => `
-                    <div class="audit-item" onclick="core.toggleAudit(this)">
-                        <div class="checkbox-fake"></div>
-                        <span>${item}</span>
-                    </div>
-                `).join('');
-            },
-
-            toggleAudit(el) {
-                el.classList.toggle('checked');
-                const total = document.querySelectorAll('.audit-item').length;
-                const checked = document.querySelectorAll('.audit-item.checked').length;
-                const percent = Math.round((checked / total) * 100);
-                const scoreEl = document.getElementById('audit-score');
-                const msgEl = document.getElementById('audit-msg');
-                scoreEl.innerText = percent + "%";
-                if (percent < 40) { scoreEl.style.color = "var(--error)"; msgEl.innerText = "Твой цифровой иммунитет на нуле! Срочно исправляйся."; }
-                else if (percent < 80) { scoreEl.style.color = "var(--warning)"; msgEl.innerText = "Неплохо, но есть дыры в безопасности."; }
-                else { scoreEl.style.color = "var(--success)"; msgEl.innerText = "Отлично! Ты надежно защищен от большинства угроз."; }
+                document.getElementById('theory-root').innerHTML = THEORY_CONTENT.map(t => 
+                    `<div class="theory-card"><strong style="color: var(--cyan);">📚 Тема ${t.id}:</strong> <h3>${t.t}</h3><p>${t.d}</p></div>`
+                ).join('');
             },
 
             preQuiz() {
+                // Скрываем навигацию во время теста
+                document.getElementById('main-nav').style.display = 'none';
+                
                 document.getElementById('test-loader').classList.remove('hidden');
                 setTimeout(() => { 
                     document.getElementById('test-loader').classList.add('hidden'); 
                     this.startQuiz(); 
-                }, 800);
+                }, 2200);
             },
 
             startQuiz() {
                 this.qIdx = 0; this.score = 0;
-                wrongQuestions = []; // Обнуляем ошибки при новом тесте
-                this.currentQuiz = [...QUIZ_DATA].sort(() => Math.random() - 0.5).slice(0, 20); // Берем 20 случайных
+                this.allAnswerTimes = [];
+                this.errorsThatNeedReview = [];
+                wrongQuestions = [];
+                suspiciousAnswers = 0;
+                currentMode = 'quiz';
+                
+                this.currentQuiz = [...QUIZ_DATA].sort(() => Math.random() - 0.5);
+                
                 document.getElementById('q-start').classList.add('hidden');
                 document.getElementById('q-play').classList.remove('hidden');
                 document.getElementById('q-result').classList.add('hidden');
@@ -471,14 +493,14 @@
                 const q = this.currentQuiz[this.qIdx];
                 document.getElementById('feedback-box').classList.add('hidden');
                 document.getElementById('next-btn').classList.add('hidden');
-                document.getElementById('q-num').innerText = `${this.qIdx + 1} / 20`;
+                
+                document.getElementById('q-num').innerText = `${this.qIdx + 1} / ${this.currentQuiz.length}`;
                 document.getElementById('q-pts').innerText = `Счет: ${this.score}`;
                 document.getElementById('q-txt').innerText = q.q;
                 const root = document.getElementById('q-ans');
                 root.innerHTML = "";
                 
                 const indices = [0, 1, 2].sort(() => Math.random() - 0.5);
-                
                 indices.forEach((originalIdx) => {
                     const b = document.createElement('button');
                     b.className = "option-btn"; 
@@ -486,22 +508,31 @@
                     b.onclick = () => this.check(originalIdx);
                     root.appendChild(b);
                 });
+
+                this.questionStartTime = Date.now();
             },
 
             check(idx) {
                 const q = this.currentQuiz[this.qIdx];
+                const answerTime = (Date.now() - this.questionStartTime) / 1000;
+                this.allAnswerTimes.push(answerTime);
+
                 const fb = document.getElementById('feedback-box');
                 fb.classList.remove('hidden');
                 
+                if (answerTime < 2 && idx === q.r) {
+                    suspiciousAnswers++;
+                }
+                
                 if(idx === q.r) { 
                     this.score++; 
-                    fb.className = "correct"; 
-                    fb.innerText = "ВЕРНО! " + q.exp; 
+                    fb.className = "theory-card correct"; 
+                    fb.innerText = "✅ ВЕРНО! " + q.exp; 
                 } else { 
-                    fb.className = "wrong"; 
-                    fb.innerText = "ОШИБКА. " + q.exp; 
-                    // ЗАПИСЫВАЕМ НОМЕР ВОПРОСА ПРИ ОШИБКЕ
-                    wrongQuestions.push(q.id); 
+                    fb.className = "theory-card wrong"; 
+                    fb.innerText = "❌ ОШИБКА. " + q.exp; 
+                    wrongQuestions.push(q.id);
+                    this.errorsThatNeedReview.push(q);
                 }
                 
                 document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
@@ -510,74 +541,106 @@
 
             nextQ() {
                 this.qIdx++;
-                if(this.qIdx < 20) this.showQuestion();
-                else this.finish();
+                if(this.qIdx < this.currentQuiz.length) this.showQuestion();
+                else this.finish(); // Сразу переходим к результатам, без показа ошибок
             },
 
             finish() {
+                // Показываем навигацию после завершения теста
+                document.getElementById('main-nav').style.display = 'flex';
+                
                 document.getElementById('q-play').classList.add('hidden');
                 document.getElementById('q-result').classList.remove('hidden');
+                document.getElementById('errors-modal').classList.add('hidden');
+                
                 const title = document.getElementById('res-title');
                 const phrase = document.getElementById('res-phrase');
                 const img = document.getElementById('res-img');
-                const desc = document.getElementById('res-desc');
-                title.innerText = `${this.score} / 20`;
                 
-                if (this.score <= 8) {
-                    phrase.innerText = "ПЛОХО: ТВОЯ ЗАЩИТА ВЗЛОМАНА!"; phrase.style.color = "var(--error)";
-                    img.src = "bad_result.jpg"; desc.innerText = "Твои знания базовые. Почитай теорию еще раз!";
-                } else if (this.score <= 16) {
-                    phrase.innerText = "НОРМАЛЬНО: ТЫ НА ПУТИ К БЕЗОПАСНОСТИ"; phrase.style.color = "var(--warning)";
-                    img.src = "normal_result.jpg"; desc.innerText = "Хороший результат, но есть пробелы.";
+                title.innerText = `${this.score} / 17`;
+                
+                const avgTime = this.allAnswerTimes.reduce((a, b) => a + b, 0) / this.allAnswerTimes.length || 0;
+                const suspiciousPercent = (suspiciousAnswers / this.allAnswerTimes.length) * 100;
+                
+                let isSuspicious = false;
+                if (suspiciousPercent > 50 && this.score > 10) {
+                    phrase.innerText = `⚠️ ПОДОЗРЕНИЕ НА СПИСЫВАНИЕ\n${suspiciousAnswers}/${this.allAnswerTimes.length} ответов < 2сек`;
+                    phrase.style.color = "var(--warning)";
+                    img.src = "normal_result.jpg";
+                    isSuspicious = true;
+                } else if (this.score <= 5) {
+                    phrase.innerText = "💔 ПЛОХО: ТВОЯ ЗАЩИТА ВЗЛОМАНА!"; 
+                    phrase.style.color = "var(--error)";
+                    img.src = "bad_result.jpg"; 
+                } else if (this.score <= 12) {
+                    phrase.innerText = "⚠️ НОРМАЛЬНО: НА ПУТИ К БЕЗОПАСНОСТИ"; 
+                    phrase.style.color = "var(--warning)";
+                    img.src = "normal_result.jpg"; 
                 } else {
-                    phrase.innerText = "ОТЛИЧНО: ТЫ КИБЕР-МАСТЕР!"; phrase.style.color = "var(--success)";
-                    img.src = "good_result.jpg"; desc.innerText = "Поздравляем! Ты полностью готов к угрозам 2026 года.";
+                    phrase.innerText = "🎉 ОТЛИЧНО: ТЫ КИБЕР-МАСТЕР!"; 
+                    phrase.style.color = "var(--success)";
+                    img.src = "good_result.jpg"; 
                 }
 
-                // Отправляем счет И список ошибок
-                sendToTelegram(this.score, 20, userName, wrongQuestions);
+                sendToTelegram(this.score, 17, userName, wrongQuestions, suspiciousAnswers, {
+                    average_time: avgTime.toFixed(1),
+                    suspicious_percent: suspiciousPercent.toFixed(1)
+                });
 
-                if(this.score > this.db.best) this.db.best = this.score;
-                document.getElementById('db-res').innerText = this.db.best + ' / 20';
+                if(this.score > this.db.best && !isSuspicious) this.db.best = this.score;
+                document.getElementById('db-res').innerText = this.db.best + ' / 17';
+            },
+
+            restartTest() {
+                // Сброс всех параметров
+                this.qIdx = 0;
+                this.score = 0;
+                this.allAnswerTimes = [];
+                this.errorsThatNeedReview = [];
+                wrongQuestions = [];
+                suspiciousAnswers = 0;
+                
+                // Возврат к стартовому экрану теста
+                document.getElementById('q-result').classList.add('hidden');
+                document.getElementById('q-start').classList.remove('hidden');
+                
+                // Показываем навигацию
+                document.getElementById('main-nav').style.display = 'flex';
             }
         };
 
         const ui = {
             tab(id) {
-                const title = document.getElementById('main-title');
-                const app = document.getElementById('app');
-                if (id === 'home') { title.classList.remove('mini'); app.classList.remove('moved'); }
-                else { title.classList.add('mini'); app.classList.add('moved'); }
                 document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
                 document.getElementById('view-' + id).classList.remove('hidden');
                 document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-                const activeBtn = document.querySelector(`[data-tab="${id}"]`);
-                if(activeBtn) activeBtn.classList.add('active');
-                window.scrollTo({top: 0, behavior: 'smooth'});
+                document.querySelectorAll('.nav-btn').forEach(b => {
+                    if(b.getAttribute('onclick').includes(id)) b.classList.add('active');
+                });
+                window.scrollTo(0,0);
+            },
+            closeBotNotification() {
+                document.getElementById('bot-notification').classList.add('hidden');
             },
             matrix() {
                 const c = document.getElementById('matrix-bg');
                 const ctx = c.getContext('2d');
-                const resize = () => { c.width = window.innerWidth; c.height = window.innerHeight; };
-                window.onresize = resize; resize();
-                const columns = Math.floor(c.width / 20);
-                const drops = new Array(columns).fill(1);
+                c.width = window.innerWidth; c.height = window.innerHeight;
+                const drops = new Array(Math.floor(c.width/20)).fill(1);
                 setInterval(() => {
-                    ctx.fillStyle = "rgba(2,2,5,0.1)"; ctx.fillRect(0,0,c.width,c.height);
+                    ctx.fillStyle = "rgba(2,2,5,0.15)"; ctx.fillRect(0,0,c.width,c.height);
                     ctx.fillStyle = "#00f2ff"; ctx.font = "15px monospace";
                     drops.forEach((y, i) => {
-                        const txt = String.fromCharCode(0x30A0 + Math.random() * 96);
-                        ctx.fillText(txt, i*20, y*20);
-                        if(y*20 > c.height && Math.random() > 0.975) drops[i] = 0;
+                        ctx.fillText(String.fromCharCode(0x30A0 + Math.random()*96), i*20, y*20);
+                        if(y*20 > c.height && Math.random() > 0.98) drops[i] = 0;
                         drops[i]++;
                     });
-                }, 50);
+                }, 60);
             }
         };
 
         window.onload = () => {
             core.init();
-            document.querySelectorAll('.nav-btn').forEach(b => b.onclick = () => ui.tab(b.dataset.tab));
         };
     </script>
 </body>
