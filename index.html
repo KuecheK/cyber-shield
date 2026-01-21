@@ -34,9 +34,11 @@
         
         #matrix-bg { 
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: 0; opacity: 0.12; pointer-events: none; 
+            z-index: 0; opacity: 0; pointer-events: none; 
+            transition: opacity 2s ease; /* Плавное появление матрицы */
         }
 
+        /* ПЛАВНАЯ АНИМАЦИЯ ЗАГОЛОВКА */
         .glitch-title {
             position: fixed; z-index: 1000; left: 50%; top: 40%;
             transform: translate(-50%, -50%); font-size: clamp(1.8rem, 8vw, 3.5rem);
@@ -62,9 +64,12 @@
             }
         }
 
+        /* МОДАЛЬНОЕ ОКНО ВХОДА */
         #name-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--dark-bg); z-index: 10000;
+            /* Новый фон вместо просто черного */
+            background: radial-gradient(circle at center, #0a0f1e 0%, #020205 100%); 
+            z-index: 10000;
             display: flex; align-items: center; justify-content: center;
             transition: opacity 0.5s ease;
         }
@@ -72,8 +77,10 @@
             background: var(--glass); border: 2px solid var(--cyan);
             padding: 35px; border-radius: 25px; text-align: center;
             max-width: 400px; width: 90%;
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.1);
         }
-        .name-card h2 { color: var(--cyan); margin-bottom: 15px; }
+        .name-card h2 { color: var(--cyan); margin-bottom: 10px; text-transform: uppercase; }
+        .name-card p { color: var(--text); opacity: 0.8; margin-bottom: 20px; font-size: 0.9rem; }
         .name-card input {
             width: 100%; padding: 18px; background: #000; 
             border: 1px solid var(--cyan); color: white; 
@@ -101,6 +108,7 @@
         }
         .nav-btn.active { background: var(--cyan); color: var(--dark-bg); box-shadow: 0 0 15px var(--cyan); }
 
+        /* ТЕРМИНАЛЬНАЯ ЗАГРУЗКА */
         #test-loader {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--dark-bg); z-index: 1000;
@@ -126,6 +134,7 @@
         }
         .terminal-line.success { color: var(--success); }
 
+        /* УВЕДОМЛЕНИЯ ОТ БОТА */
         #bot-notification {
             position: fixed; bottom: 30px; right: 30px;
             background: rgba(0, 242, 255, 0.15); border: 2px solid var(--cyan);
@@ -139,6 +148,7 @@
             to { opacity: 1; transform: translateX(0); }
         }
 
+        /* МОДАЛЬНОЕ ОКНО ОШИБОК */
         #errors-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(2, 2, 5, 0.95); z-index: 5000;
@@ -160,6 +170,21 @@
             border-radius: 15px; border-left: 4px solid var(--cyan); 
             margin-bottom: 12px;
         }
+
+        .audit-item {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+            padding: 15px; margin-bottom: 10px; border-radius: 12px;
+            display: flex; align-items: center; cursor: pointer; transition: 0.3s;
+        }
+        .audit-item.checked { background: rgba(0, 255, 136, 0.1); border-color: var(--success); }
+        .checkbox-fake {
+            width: 24px; height: 24px; border: 2px solid #8892b0;
+            border-radius: 6px; margin-right: 15px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .audit-item.checked .checkbox-fake { background: var(--success); border-color: var(--success); }
+        .checkbox-fake::after { content: '✓'; color: #000; font-weight: bold; opacity: 0; }
+        .audit-item.checked .checkbox-fake::after { opacity: 1; }
 
         .btn-main { 
             background: var(--purple); color: white; border: none; 
@@ -189,8 +214,9 @@
 
     <div id="name-modal">
         <div class="name-card">
-            <h2>КАК ТЕБЯ НАЗЫВАТЬ?</h2>
-            <input type="text" id="user-name-input" placeholder="напиши сюда">
+            <h2>ДОБРО ПОЖАЛОВАТЬ!</h2>
+            <p>Приятно познакомиться. Как мне тебя называть?</p>
+            <input type="text" id="user-name-input" placeholder="Твое имя или никнейм">
             <button class="btn-main" onclick="initApp()">ВОЙТИ В СИСТЕМУ</button>
         </div>
     </div>
@@ -221,7 +247,7 @@
             <div class="terminal-window">
                 <div class="terminal-line">▶ cyber-shield@2.0.0 $ initialize_test</div>
                 <div class="terminal-line">loading_database_questions.json...</div>
-                <div class="terminal-line success">✓ Database loaded (20 questions)</div>
+                <div class="terminal-line success">✓ Database loaded (17 questions)</div>
                 <div class="terminal-line">analyzing_user_security_level.py...</div>
                 <div class="terminal-line success">✓ Security profile initialized</div>
                 <div class="terminal-line success">✓ Exam ready - Press START</div>
@@ -261,13 +287,13 @@
             <div id="q-start">
                 <h2 style="text-align:center; color: var(--cyan);">ТЕСТ БЕЗОПАСНОСТИ</h2>
                 <div class="theory-card" style="margin: 20px 0; text-align: center;">
-                    <p>Тест содержит 20 сложных вопросов. Сначала изучите раздел "Обучение".</p>
+                    <p>Тест содержит 17 вопросов по всем темам обучения.</p>
                 </div>
                 <button class="btn-main" onclick="core.preQuiz()">ЗАПУСТИТЬ ТЕСТ</button>
             </div>
             <div id="q-play" class="hidden">
                 <div style="display:flex; justify-content:space-between; margin-bottom: 15px; color: var(--cyan); font-weight: bold;">
-                    <span id="q-num">1/20</span>
+                    <span id="q-num">1/17</span>
                     <span id="q-pts">СЧЕТ: 0</span>
                 </div>
                 <div id="feedback-box" class="theory-card hidden"></div>
@@ -276,7 +302,7 @@
                 <button id="next-btn" class="btn-main hidden" onclick="core.nextQ()">СЛЕДУЮЩИЙ ВОПРОС</button>
             </div>
             <div id="q-result" class="hidden" style="text-align:center;">
-                <h2 id="res-title" style="font-size: 3rem; color: var(--cyan);">0/20</h2>
+                <h2 id="res-title" style="font-size: 3rem; color: var(--cyan);">0/17</h2>
                 <p id="res-phrase" style="margin: 20px 0; font-size: 1.2rem;"></p>
                 <img id="res-img" src="" class="result-image">
                 <button class="btn-main" onclick="core.restartTest()">ПРОЙТИ ТЕСТ ЗАНОВО</button>
@@ -287,7 +313,7 @@
             <h2 style="text-align: center; color: var(--cyan);">ТВОЯ СТАТИСТИКА</h2>
             <div class="theory-card">
                 <p>Твой ID: <b id="db-uid" style="color:var(--cyan)">...</b></p>
-                <p>Лучший результат: <b id="db-res" style="color:var(--success)">0/20</b></p>
+                <p>Лучший результат: <b id="db-res" style="color:var(--success)">0/17</b></p>
             </div>
         </div>
 
@@ -308,188 +334,64 @@
         let currentMode = 'quiz';
 
         const THEORY_CONTENT = [
-            {id: "I", t: "Сетевые протоколы и защита (DNS, VPN, UPnP)", d: 
-                "Начнем с основ сети. <b>DNSSEC</b> — это защита системы доменных имен, она использует цифровые подписи для гарантии целостности данных. <br><br>" +
-                "<b>VPN</b> создает зашифрованный туннель, но помните: он не дает полной анонимности, он лишь скрывает трафик от провайдера и соседей по сети. <br><br>" +
-                "Опасность для дома: протокол <b>UPnP</b> на роутере. Он позволяет устройствам самим открывать порты во внешний мир. Это дыра в безопасности, её нужно отключать."},
-            
-            {id: "II", t: "Безопасность Веб-соединения (HTTPS, HSTS)", d: 
-                "Просто HTTPS недостаточно. Механизм <b>HSTS</b> принудительно заставляет браузер использовать только защищенное соединение.<br><br>" +
-                "Сертификаты безопасности проверяются через цепочку доверия, где главным звеном является <b>Root CA</b> (Корневой центр сертификации) — это якорь доверия."},
-
-            {id: "III", t: "Подмена понятий: Гомографы и Тайпосквоттинг", d: 
-                "Хакеры обманывают зрение. <b>Гомографическая атака</b> использует визуально похожие символы разных алфавитов (например, кириллическая 'а' вместо латинской 'a').<br><br>" +
-                "<b>Typosquatting</b> — это регистрация доменов с частыми опечатками (goggle.com вместо google.com)."},
-
-            {id: "IV", t: "Скрытые угрозы: XSS, SQLi, MitB", d: 
-                "<b>SQL Injection</b> — внедрение вредоносного кода для манипуляции базой данных.<br>" +
-                "<b>Man-in-the-Browser</b> (MitB) — троян внутри браузера, подменяющий страницы на лету.<br>" +
-                "Для защиты от кражи Cookie через XSS используется флаг <b>HttpOnly</b>. Он запрещает доступ к кукам через JavaScript."},
-
-            {id: "V", t: "Криптография: Соль, Перец и Ключи", d: 
-                "В <b>симметричном</b> шифровании один ключ. В <b>асимметричном</b> — пара (открытый и закрытый).<br><br>" +
-                "Пароли не хранят в чистом виде. К ним добавляют <b>Соль</b> (уникальна) и <b>Перец</b> (секретный ключ, хранится не в базе).<br><br>" +
-                "Свойство TLS — <b>Forward Secrecy</b>. Если украдут ключ сервера, старые переписки расшифровать не удастся."},
-
-            {id: "VI", t: "Аутентификация: 2FA и Атаки", d: 
-                "Самый надежный метод 2FA — <b>аппаратные ключи (FIDO2)</b>. СМС уязвимы из-за протокола SS7.<br><br>" +
-                "<b>Replay Attack</b> — когда хакер перехватывает пакеты и отправляет их снова.<br>" +
-                "<b>Brute-force</b> — это простой перебор всех возможных комбинаций пароля."},
-
-            {id: "VII", t: "Zero Trust и Изоляция", d: 
-                "Стандарт — <b>Zero Trust</b>. Мы проверяем каждый запрос, даже внутри сети.<br><br>" +
-                "Для запуска подозрительных программ используется <b>Sandbox</b> (Песочница) — изолированная среда.<br>" +
-                "Все известные уязвимости заносятся в базу <b>CVE</b>."}
+            {id: 1, t: "Двухфакторная аутентификация (2FA)", d: "Пароль могут украсть. 2FA требует второй ключ: код из СМС или приложения."},
+            {id: 2, t: "Протокол HTTPS", d: "Буква 'S' и замочек означают, что канал зашифрован. На сайтах HTTP твои данные видны всем."},
+            {id: 3, t: "Фишинг", d: "Подделка сайтов. Не верьте дизайну — смотрите на адресную строку."},
+            {id: 4, t: "Менеджеры паролей", d: "Единственный способ помнить 50 сложных паролей."},
+            {id: 5, t: "Социальная инженерия", d: "Взлом человека, а не компьютера. Если друг срочно просит денег — это взлом его аккаунта."},
+            {id: 6, t: "Публичный Wi-Fi", d: "В открытых сетях (кафе, метро) трафик виден всем. Всегда включайте VPN."},
+            {id: 7, t: "Программы-вымогатели (Ransomware)", d: "Вирусы, шифрующие файлы за выкуп."},
+            {id: 8, t: "RAT и Веб-камеры", d: "Троян удаленного доступа позволяет хакеру смотреть через твою камеру."},
+            {id: 9, t: "Брутфорс (Brute Force)", d: "Метод взлома полным перебором всех комбинаций."},
+            {id: 10, t: "Juice Jacking (USB-зарядка)", d: "Заряжая телефон через USB-порт в ТЦ, можно подцепить вирус."},
+            {id: 11, t: "Резервное копирование (Бэкап)", d: "Единственное спасение от шифровальщиков и поломки диска."},
+            {id: 12, t: "Повторное использование паролей", d: "Если взломают форум с твоим паролем, хакеры сразу попробуют его на твоей почте."},
+            {id: 13, t: "Смишинг (SMS-phishing)", d: "Фишинг через СМС. Банки НИКОГДА не просят кликать на ссылки."},
+            {id: 14, t: "Обновления ПО", d: "Обновления закрывают найденные уязвимости (дыры)."},
+            {id: 15, t: "Дропы (Дропперы)", d: "Подставные лица для обналичивания краденых денег."},
+            {id: 16, t: "Блокировка экрана", d: "Графический ключ легко подсмотреть по следам на экране."},
+            {id: 17, t: "Макро-вирусы", d: "Вредоносный код прячется внутри документов Word/Excel."}
         ];
 
         const QUIZ_DATA = [
-            {
-                id: 1, 
-                q: "В чем главное отличие HSTS от обычного HTTPS редиректа?", 
-                a: ["HSTS запрещает любую попытку соединения по HTTP на уровне браузера", "HSTS шифрует заголовки пакетов, которые HTTPS оставляет открытыми", "HSTS использует более длинные ключи шифрования (4096 бит)"], 
-                r: 0, 
-                exp: "HSTS блокирует саму попытку обращения по HTTP в браузере."
-            },
-            {
-                id: 2, 
-                q: "Что гарантирует технология DNSSEC?", 
-                a: ["Конфиденциальность: провайдер не видит ваши сайты", "Аутентичность: ответ пришел от реального сервера и не был изменен", "Доступность: автоматическое переключение на резервные IP"], 
-                r: 1, 
-                exp: "DNSSEC гарантирует, что данные DNS не были подменены хакером."
-            },
-            {
-                id: 3, 
-                q: "Какую уязвимость предотвращает флаг Cookie 'HttpOnly'?", 
-                a: ["Перехват Cookie через незащищенные каналы Wi-Fi (MitM)", "Чтение содержимого Cookie через скрипты JavaScript (XSS)", "Подделку межсайтовых запросов от имени пользователя (CSRF)"], 
-                r: 1, 
-                exp: "HttpOnly делает куки недоступными для JavaScript-кода."
-            },
-            {
-                id: 4, 
-                q: "Что такое «Соль» (Salt) в контексте хранения паролей?", 
-                a: ["Случайная строка, добавляемая к паролю перед хешированием", "Секретный ключ, хранящийся на отдельном аппаратном модуле", "Алгоритм повторного шифрования хеша"], 
-                r: 0, 
-                exp: "Соль делает хеш пароля уникальным и защищает от радужных таблиц."
-            },
-            {
-                id: 5, 
-                q: "Почему SMS не считается надежным вторым фактором (2FA)?", 
-                a: ["SMS-сообщения не зашифрованы и хранятся у оператора вечно", "Протокол SS7 уязвим для перехвата и клонирования SIM-карт", "SMS-коды слишком короткие и их легко подобрать"], 
-                r: 1, 
-                exp: "SMS уязвимы из-за несовершенства мобильных сетей и протокола SS7."
-            },
-            {
-                id: 6, 
-                q: "Что подразумевает концепция Zero Trust?", 
-                a: ["Полный запрет на использование облачных сервисов", "Проверка каждого запроса, даже если он идет из доверенной сети", "Использование исключительно одноразовых сессионных ключей"], 
-                r: 1, 
-                exp: "При Zero Trust никто не считается доверенным по умолчанию."
-            },
-            {
-                id: 7, 
-                q: "В чем суть атаки SQL Injection?", 
-                a: ["Внедрение вредоносного скрипта для кражи сессии пользователя", "Внедрение команд базы данных через поля ввода для кражи данных", "Внедрение поддельных DNS-записей"], 
-                r: 1, 
-                exp: "SQLi позволяет хакеру манипулировать базой данных сайта."
-            },
-            {
-                id: 8, 
-                q: "Чем опасен включенный UPnP на домашнем роутере?", 
-                a: ["Позволяет программам открывать порты во внешний мир без спроса", "Позволяет соседям подключаться к Wi-Fi без пароля", "Передает трафик провайдеру в открытом виде"], 
-                r: 0, 
-                exp: "UPnP может открыть доступ к вашим внутренним устройствам из интернета."
-            },
-            {
-                id: 9, 
-                q: "Что такое «Тайпосквоттинг» (Typosquatting)?", 
-                a: ["Подмена символов на визуально похожие (гомографы)", "Регистрация доменов с частыми опечатками пользователей", "Перехват ввода с клавиатуры"], 
-                r: 1, 
-                exp: "Тайпосквоттинг основан на ошибках пользователя при вводе адреса."
-            },
-            {
-                id: 10, 
-                q: "Что обеспечивает Forward Secrecy в TLS?", 
-                a: ["Невозможность расшифровать старый трафик при краже ключа сервера", "Автоматическое обновление сертификатов", "Скрытие реального IP-адреса сервера"], 
-                r: 0, 
-                exp: "Это защита прошлых сессий связи даже при будущих взломах."
-            },
-            {
-                id: 11, 
-                q: "Какая атака называется «Man-in-the-Browser»?", 
-                a: ["Перехват трафика на уровне Wi-Fi роутера", "Модификация страниц трояном непосредственно внутри браузера", "Подмена адресной строки визуальными трюками"], 
-                r: 1, 
-                exp: "Троян MitB изменяет контент страницы прямо в процессе отображения."
-            },
-            {
-                id: 12, 
-                q: "Для чего используется «Песочница» (Sandbox)?", 
-                a: ["Для анализа подозрительных файлов в изолированной среде", "Для безопасного хранения паролей и ключей", "Для создания резервных копий системы"], 
-                r: 0, 
-                exp: "Песочница не дает вирусу выйти за пределы изолированной программы."
-            },
-            {
-                id: 13, 
-                q: "Что такое CVE в информационной безопасности?", 
-                a: ["База данных общеизвестных уязвимостей в ПО", "Протокол проверки цифровых сертификатов", "Стандарт шифрования для банковских карт"], 
-                r: 0, 
-                exp: "CVE — это реестр всех найденных дыр в безопасности программ."
-            },
-            {
-                id: 14, 
-                q: "В чем отличие «Перца» (Pepper) от «Соли»?", 
-                a: ["Перец хранится в базе данных, а соль — в коде приложения", "Перец — общий для всех секретный ключ, хранится вне базы", "Перец используется только для асимметричного шифрования"], 
-                r: 1, 
-                exp: "Перец защищает хеши паролей, если хакер украл только базу данных."
-            },
-            {
-                id: 15, 
-                q: "Что такое Brute-force атака?", 
-                a: ["Простой перебор всех возможных комбинаций пароля", "Перехват и повторная отправка зашифрованных пакетов", "Внедрение вредоносного кода в базу данных через формы"], 
-                r: 0, 
-                exp: "Брутфорс — это метод 'грубой силы', попытка угадать пароль перебором."
-            },
-            {
-                id: 16, 
-                q: "Что такое FIDO2/WebAuthn?", 
-                a: ["Стандарт аппаратной аутентификации (ключи безопасности)", "Протокол шифрования видеопотоков", "Система автоматической генерации паролей"], 
-                r: 0, 
-                exp: "FIDO2 позволяет входить на сайты с помощью физических USB-ключей."
-            },
-            {
-                id: 17, 
-                q: "Какую основную функцию выполняет VPN?", 
-                a: ["Делает пользователя полностью анонимным для всех сайтов", "Создает зашифрованный туннель для защиты трафика", "Автоматически блокирует все вирусы на уровне роутера"], 
-                r: 1, 
-                exp: "VPN скрывает трафик от локальных угроз, но не дает абсолютной анонимности."
-            },
-            {
-                id: 18, 
-                q: "Что такое «Гомографическая атака»?", 
-                a: ["Использование визуально идентичных символов разных алфавитов", "Подбор пароля на основе личных данных пользователя", "Атака на хеш-функцию для поиска коллизий"], 
-                r: 0, 
-                exp: "Хакеры используют кириллическую 'а', чтобы подделать латинскую 'a'."
-            },
-            {
-                id: 19, 
-                q: "Что защищает от Replay Attack (Атаки повтора)?", 
-                a: ["Использование длинных паролей (более 12 символов)", "Использование меток времени (timestamp) или nonce", "Использование скрытого SSID для Wi-Fi"], 
-                r: 1, 
-                exp: "Метки времени делают старые перехваченные данные недействительными."
-            },
-            {
-                id: 20, 
-                q: "Какова роль Root CA (Корневого центра сертификации)?", 
-                a: ["Шифровать трафик между клиентом и сервером", "Быть доверенным источником для проверки цепочки сертификатов", "Хранить резервные ключи шифрования для спецслужб"], 
-                r: 1, 
-                exp: "Браузер доверяет сертификату сайта, если за него поручился Root CA."
-            }
+            {id: 1, q: "Что защищает 2FA от взлома аккаунта?", a: ["Только шифрует пароль", "Требует второй ключ кроме пароля", "Автоматически меняет пароль"], r: 1, exp: "2FA добавляет второй фактор (телефон/ключ) кроме пароля."},
+            {id: 2, q: "Почему HTTPS безопаснее чем HTTP?", a: ["Быстрее загружает страницы", "Шифрует данные при передаче", "Автоматически блокирует вирусы"], r: 1, exp: "HTTPS использует SSL/TLS для шифрования."},
+            {id: 3, q: "Главный признак фишингового сайта?", a: ["Плохой дизайн", "Неправильный адрес в строке браузера", "Отсутствие логотипа"], r: 1, exp: "Фишеры копируют дизайн, но не могут подделать домен."},
+            {id: 4, q: "Какое место хранить пароли максимально безопасно?", a: ["Записная книжка", "Зашифрованный менеджер паролей", "Памятка в телефоне"], r: 1, exp: "Только менеджеры паролей обеспечивают шифрование."},
+            {id: 5, q: "Если друг просит деньги через мессенджер срочно - это?", a: ["Нормальная ситуация", "Вероятно, его аккаунт взломали", "Тест на доверие"], r: 1, exp: "Когда взламывают аккаунт, первое - просят деньги."},
+            {id: 6, q: "Почему открытый Wi-Fi (в кафе) опасен?", a: ["Медленная скорость", "Любой в сети может перехватить трафик", "Много рекламы"], r: 1, exp: "На открытом Wi-Fi трафик не шифруется."},
+            {id: 7, q: "Как работает вирус Ransomware?", a: ["Медленно крадет файлы", "Шифрует твои файлы и требует выкуп", "Выключает антивирус"], r: 1, exp: "Ransomware - это шифровальщик."},
+            {id: 8, q: "Что делает RAT (троян удаленного доступа)?", a: ["Замедляет интернет", "Дает хакеру полный контроль над ПК", "Удаляет антивирус"], r: 1, exp: "RAT позволяет удаленно управлять ПК."},
+            {id: 9, q: "Как работает атака перебора (Brute Force)?", a: ["Отправляет вирус", "Пробует все комбинации паролей подряд", "Использует ИИ"], r: 1, exp: "Brute Force - машина пробует пароли: 123456, 123457..."},
+            {id: 10, q: "Почему опасно заряжать телефон через USB в общественном месте?", a: ["Может упасть и сломаться", "USB передает данные кроме электричества", "Браузер будет медленнее"], r: 1, exp: "USB - это не только электричество, но и канал данных."},
+            {id: 11, q: "Что единственное спасает файлы от Ransomware?", a: ["Дорогой антивирус", "Резервная копия на внешнем диске", "Отключение интернета"], r: 1, exp: "Только бэкап на отдельном носителе 100% спасает."},
+            {id: 12, q: "Почему один пароль на всех сайтах - это опасно?", a: ["Невозможно выбрать сложный", "Если утечка одного сайта - взломают ВСЕ", "Браузер не может запомнить много"], r: 1, exp: "Утечка данных происходит постоянно."},
+            {id: 13, q: "Может ли банк отправить ссылку для подтверждения в СМС?", a: ["Да, это стандарт", "НЕТ! Это Смишинг", "Только если СРОЧНО"], r: 1, exp: "Банки НИКОГДА не шлют ссылки в СМС."},
+            {id: 14, q: "В чем главное назначение обновлений ОС?", a: ["Добавить новые смодзи", "Закрыть найденные уязвимости", "Увеличить яркость экрана"], r: 1, exp: "Обновления = патчи для безопасности."},
+            {id: 15, q: "Чем занимаются люди, работающие 'drop'ами?", a: ["Доставляют посылки", "Отмывают украденные деньги", "Программируют вирусы"], r: 1, exp: "Dropы - это мулы. Это преступление!"},
+            {id: 16, q: "Почему графический ключ менее защищен чем PIN?", a: ["Жирные следы на экране показывают траекторию", "Он занимает слишком много памяти", "Его сложнее придумать"], r: 0, exp: "На сенсорном экране видны отпечатки пальцев."},
+            {id: 17, q: "Почему макросы в Word файлах опасны?", a: ["Они ломают форматирование", "Могут содержать вредоносный код", "Замедляют открытие"], r: 1, exp: "Макросы - это скрипты. Мошенники прячут вирусы в макросах."}
         ];
 
+        const AUDIT_ITEMS = [
+            "У меня включена 2FA на почте и основных соцсетях",
+            "Я использую менеджер паролей и не помню их наизусть",
+            "Мои пароли не повторяются на разных сайтах",
+            "На компьютере стоит включенный антивирус",
+            "Я регулярно обновляю Windows/macOS/Android/iOS",
+            "Я делаю бэкапы важных фото и документов",
+            "Я не открываю вложения от незнакомцев в почте",
+            "Я проверяю домены сайтов перед вводом данных"
+        ];
+
+        // ФУНКЦИЯ ЗАГРУЗКИ НОВОСТЕЙ ОТ АДМИНА
         async function fetchNews() {
             const container = document.getElementById('news-container');
             try {
                 const res = await fetch('https://cyber-shield-bot.onrender.com/admin_message');
                 const data = await res.json();
+                
+                // Проверяем структуру ответа от бота
                 if(data.status === 'success' && data.messages && data.messages.length > 0) {
                     container.innerHTML = data.messages.reverse().map(m => `
                         <div style="background: rgba(112, 0, 255, 0.1); border: 1px solid var(--purple); padding: 15px; border-radius: 15px; margin-bottom: 15px;">
@@ -502,14 +404,16 @@
                     container.innerHTML = '<p style="text-align: center; opacity: 0.5;">Пока новостей нет.</p>';
                 }
             } catch (e) {
+                console.error('Ошибка загрузки новостей:', e);
                 container.innerHTML = '<p style="text-align: center; color: var(--error);">❌ Ошибка связи с сервером.</p>';
             }
         }
 
+        // ФУНКЦИЯ ОТПРАВКИ РЕЗУЛЬТАТОВ В TELEGRAM БОТ
         async function sendToTelegram(score, total, name, wrong_qs, suspicious, timeData) {
             const RENDER_URL = "https://cyber-shield-bot.onrender.com/send_result";
             try {
-                await fetch(RENDER_URL, {
+                const response = await fetch(RENDER_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -520,12 +424,25 @@
                         answer_times: timeData
                     })
                 });
-            } catch (e) { console.error("Error sending results", e); }
+                
+                const result = await response.json();
+                if(result.status === 'success') {
+                    console.log('✅ Результаты отправлены в Telegram');
+                } else {
+                    console.error('⚠️ Ошибка на сервере:', result.message);
+                }
+            } catch (e) {
+                console.error("❌ Ошибка отправки результатов:", e);
+            }
         }
 
         function initApp() {
             const input = document.getElementById('user-name-input');
             if(input.value) userName = input.value;
+            
+            // Включаем матрицу
+            document.getElementById('matrix-bg').style.opacity = '0.12';
+            
             document.getElementById('name-modal').style.opacity = '0';
             setTimeout(() => {
                 document.getElementById('name-modal').classList.add('hidden');
@@ -539,21 +456,25 @@
             db: { best: 0, uid: 'USER-' + Math.floor(1000 + Math.random()*9000) },
             qIdx: 0, score: 0, currentQuiz: [],
             questionStartTime: 0, allAnswerTimes: [],
+            errorsThatNeedReview: [],
             
             init() {
                 ui.matrix();
                 this.renderTheory();
+                this.renderAudit();
                 document.getElementById('db-uid').innerText = this.db.uid;
             },
 
             renderTheory() {
                 document.getElementById('theory-root').innerHTML = THEORY_CONTENT.map(t => 
-                    `<div class="theory-card"><strong style="color: var(--cyan);">📚 ${t.id}:</strong> <h3>${t.t}</h3><p>${t.d}</p></div>`
+                    `<div class="theory-card"><strong style="color: var(--cyan);">📚 Тема ${t.id}:</strong> <h3>${t.t}</h3><p>${t.d}</p></div>`
                 ).join('');
             },
 
             preQuiz() {
+                // Скрываем навигацию во время теста
                 document.getElementById('main-nav').style.display = 'none';
+                
                 document.getElementById('test-loader').classList.remove('hidden');
                 setTimeout(() => { 
                     document.getElementById('test-loader').classList.add('hidden'); 
@@ -564,9 +485,13 @@
             startQuiz() {
                 this.qIdx = 0; this.score = 0;
                 this.allAnswerTimes = [];
+                this.errorsThatNeedReview = [];
                 wrongQuestions = [];
                 suspiciousAnswers = 0;
+                currentMode = 'quiz';
+                
                 this.currentQuiz = [...QUIZ_DATA].sort(() => Math.random() - 0.5);
+                
                 document.getElementById('q-start').classList.add('hidden');
                 document.getElementById('q-play').classList.remove('hidden');
                 document.getElementById('q-result').classList.add('hidden');
@@ -577,13 +502,14 @@
                 const q = this.currentQuiz[this.qIdx];
                 document.getElementById('feedback-box').classList.add('hidden');
                 document.getElementById('next-btn').classList.add('hidden');
+                
                 document.getElementById('q-num').innerText = `${this.qIdx + 1} / ${this.currentQuiz.length}`;
                 document.getElementById('q-pts').innerText = `Счет: ${this.score}`;
                 document.getElementById('q-txt').innerText = q.q;
                 const root = document.getElementById('q-ans');
                 root.innerHTML = "";
                 
-                const indices = Array.from({length: q.a.length}, (_, i) => i).sort(() => Math.random() - 0.5);
+                const indices = [0, 1, 2].sort(() => Math.random() - 0.5);
                 indices.forEach((originalIdx) => {
                     const b = document.createElement('button');
                     b.className = "option-btn"; 
@@ -591,6 +517,7 @@
                     b.onclick = () => this.check(originalIdx);
                     root.appendChild(b);
                 });
+
                 this.questionStartTime = Date.now();
             },
 
@@ -598,9 +525,14 @@
                 const q = this.currentQuiz[this.qIdx];
                 const answerTime = (Date.now() - this.questionStartTime) / 1000;
                 this.allAnswerTimes.push(answerTime);
+
                 const fb = document.getElementById('feedback-box');
                 fb.classList.remove('hidden');
-                if (answerTime < 2 && idx === q.r) suspiciousAnswers++;
+                
+                if (answerTime < 2 && idx === q.r) {
+                    suspiciousAnswers++;
+                }
+                
                 if(idx === q.r) { 
                     this.score++; 
                     fb.className = "theory-card correct"; 
@@ -609,7 +541,9 @@
                     fb.className = "theory-card wrong"; 
                     fb.innerText = "❌ ОШИБКА. " + q.exp; 
                     wrongQuestions.push(q.id);
+                    this.errorsThatNeedReview.push(q);
                 }
+                
                 document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
                 document.getElementById('next-btn').classList.remove('hidden');
             },
@@ -617,55 +551,69 @@
             nextQ() {
                 this.qIdx++;
                 if(this.qIdx < this.currentQuiz.length) this.showQuestion();
-                else this.finish(); 
+                else this.finish(); // Сразу переходим к результатам, без показа ошибок
             },
 
             finish() {
+                // Показываем навигацию после завершения теста
                 document.getElementById('main-nav').style.display = 'flex';
+                
                 document.getElementById('q-play').classList.add('hidden');
                 document.getElementById('q-result').classList.remove('hidden');
+                document.getElementById('errors-modal').classList.add('hidden');
                 
                 const title = document.getElementById('res-title');
                 const phrase = document.getElementById('res-phrase');
                 const img = document.getElementById('res-img');
-                const totalQ = QUIZ_DATA.length;
-                title.innerText = `${this.score} / ${totalQ}`;
+                
+                title.innerText = `${this.score} / 17`;
                 
                 const avgTime = this.allAnswerTimes.reduce((a, b) => a + b, 0) / this.allAnswerTimes.length || 0;
                 const suspiciousPercent = (suspiciousAnswers / this.allAnswerTimes.length) * 100;
                 
                 let isSuspicious = false;
-                if (suspiciousPercent > 50 && this.score > 15) {
-                    phrase.innerText = `⚠️ ПОДОЗРЕНИЕ НА СПИСЫВАНИЕ\nСлишком быстрые ответы`;
+                if (suspiciousPercent > 50 && this.score > 10) {
+                    phrase.innerText = `⚠️ ПОДОЗРЕНИЕ НА СПИСЫВАНИЕ\n${suspiciousAnswers}/${this.allAnswerTimes.length} ответов < 2сек`;
                     phrase.style.color = "var(--warning)";
                     img.src = "normal_result.jpg";
                     isSuspicious = true;
-                } else if (this.score <= 6) {
-                    phrase.innerText = "💔 СЛАБО: ТВОЯ ЗАЩИТА ВЗЛОМАНА!"; 
+                } else if (this.score <= 5) {
+                    phrase.innerText = "💔 ПЛОХО: ТВОЯ ЗАЩИТА ВЗЛОМАНА!"; 
                     phrase.style.color = "var(--error)";
                     img.src = "bad_result.jpg"; 
-                } else if (this.score <= 14) {
-                    phrase.innerText = "⚠️ НОРМАЛЬНО: ЕСТЬ ПРОБЕЛЫ В ЗНАНИЯХ"; 
+                } else if (this.score <= 12) {
+                    phrase.innerText = "⚠️ НОРМАЛЬНО: НА ПУТИ К БЕЗОПАСНОСТИ"; 
                     phrase.style.color = "var(--warning)";
                     img.src = "normal_result.jpg"; 
                 } else {
-                    phrase.innerText = "🎉 ОТЛИЧНО: ТЫ КИБЕР-ЭКСПЕРТ!"; 
+                    phrase.innerText = "🎉 ОТЛИЧНО: ТЫ КИБЕР-МАСТЕР!"; 
                     phrase.style.color = "var(--success)";
                     img.src = "good_result.jpg"; 
                 }
 
-                sendToTelegram(this.score, totalQ, userName, wrongQuestions, suspiciousAnswers, {
+                sendToTelegram(this.score, 17, userName, wrongQuestions, suspiciousAnswers, {
                     average_time: avgTime.toFixed(1),
                     suspicious_percent: suspiciousPercent.toFixed(1)
                 });
+
                 if(this.score > this.db.best && !isSuspicious) this.db.best = this.score;
-                document.getElementById('db-res').innerText = this.db.best + ' / ' + totalQ;
+                document.getElementById('db-res').innerText = this.db.best + ' / 17';
             },
 
             restartTest() {
-                this.qIdx = 0; this.score = 0;
+                // Сброс всех параметров
+                this.qIdx = 0;
+                this.score = 0;
+                this.allAnswerTimes = [];
+                this.errorsThatNeedReview = [];
+                wrongQuestions = [];
+                suspiciousAnswers = 0;
+                
+                // Возврат к стартовому экрану теста
                 document.getElementById('q-result').classList.add('hidden');
                 document.getElementById('q-start').classList.remove('hidden');
+                
+                // Показываем навигацию
                 document.getElementById('main-nav').style.display = 'flex';
             }
         };
@@ -700,7 +648,9 @@
             }
         };
 
-        window.onload = () => { core.init(); };
+        window.onload = () => {
+            core.init();
+        };
     </script>
 </body>
 </html>
