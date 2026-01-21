@@ -34,7 +34,8 @@
         
         #matrix-bg { 
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: 0; opacity: 0.12; pointer-events: none; 
+            z-index: 0; opacity: 0; pointer-events: none; 
+            transition: opacity 2s ease; /* Плавное появление матрицы */
         }
 
         /* ПЛАВНАЯ АНИМАЦИЯ ЗАГОЛОВКА */
@@ -66,7 +67,9 @@
         /* МОДАЛЬНОЕ ОКНО ВХОДА */
         #name-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--dark-bg); z-index: 10000;
+            /* Новый фон вместо просто черного */
+            background: radial-gradient(circle at center, #0a0f1e 0%, #020205 100%); 
+            z-index: 10000;
             display: flex; align-items: center; justify-content: center;
             transition: opacity 0.5s ease;
         }
@@ -74,8 +77,10 @@
             background: var(--glass); border: 2px solid var(--cyan);
             padding: 35px; border-radius: 25px; text-align: center;
             max-width: 400px; width: 90%;
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.1);
         }
-        .name-card h2 { color: var(--cyan); margin-bottom: 15px; }
+        .name-card h2 { color: var(--cyan); margin-bottom: 10px; text-transform: uppercase; }
+        .name-card p { color: var(--text); opacity: 0.8; margin-bottom: 20px; font-size: 0.9rem; }
         .name-card input {
             width: 100%; padding: 18px; background: #000; 
             border: 1px solid var(--cyan); color: white; 
@@ -209,8 +214,9 @@
 
     <div id="name-modal">
         <div class="name-card">
-            <h2>КАК ТЕБЯ НАЗЫВАТЬ?</h2>
-            <input type="text" id="user-name-input" placeholder="напиши сюда">
+            <h2>ДОБРО ПОЖАЛОВАТЬ!</h2>
+            <p>Приятно познакомиться. Как мне тебя называть?</p>
+            <input type="text" id="user-name-input" placeholder="Твое имя или никнейм">
             <button class="btn-main" onclick="initApp()">ВОЙТИ В СИСТЕМУ</button>
         </div>
     </div>
@@ -433,6 +439,9 @@
         function initApp() {
             const input = document.getElementById('user-name-input');
             if(input.value) userName = input.value;
+            
+            // Включаем матрицу
+            document.getElementById('matrix-bg').style.opacity = '0.12';
             
             document.getElementById('name-modal').style.opacity = '0';
             setTimeout(() => {
